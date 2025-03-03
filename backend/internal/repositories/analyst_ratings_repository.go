@@ -18,6 +18,13 @@ func (r *AnalystRatingsRepository) Create(rating *models.AnalystRating) error {
 	return r.db.Create(rating).Error
 }
 
+func (r *AnalystRatingsRepository) CreateBatch(ratings []models.AnalystRating) error {
+	if len(ratings) == 0 {
+		return nil
+	}
+	return r.db.Create(&ratings).Error
+}
+
 func (r *AnalystRatingsRepository) GetByID(id uint) (*models.AnalystRating, error) {
 	var rating models.AnalystRating
 	err := r.db.First(&rating, id).Error

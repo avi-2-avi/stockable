@@ -12,13 +12,15 @@ import (
 
 type TruAdapter struct {
 	apiURL       string
+	token        string
 	service      *services.AnalystRatingsService
 	dataSourceID uint
 }
 
-func NewTruAdapter(apiURL string, service *services.AnalystRatingsService, dataSourceID uint) RatingAdapter {
+func NewTruAdapter(apiURL string, token string, service *services.AnalystRatingsService, dataSourceID uint) RatingAdapter {
 	return &TruAdapter{
 		apiURL:       apiURL,
+		token:        token,
 		service:      service,
 		dataSourceID: dataSourceID,
 	}
@@ -32,6 +34,7 @@ func (truAdapter *TruAdapter) FetchData() ([]models.AnalystRating, error) {
 
 	for {
 		url := truAdapter.buildUrl(nextPage)
+		println("URL: ", url)
 
 		response, err := truAdapter.callAPI(url)
 		if err != nil {
@@ -39,6 +42,7 @@ func (truAdapter *TruAdapter) FetchData() ([]models.AnalystRating, error) {
 		}
 
 		ratings, newNextPage, err := truAdapter.parseResponse(response)
+		println("Ratings: ", ratings)
 		if err != nil {
 			return nil, err
 		}
@@ -72,7 +76,16 @@ func (truAdapter *TruAdapter) buildUrl(nextPage string) string {
 }
 
 func (truAdapter *TruAdapter) callAPI(url string) (*http.Response, error) {
-	response, err := http.Get(url)
+	request, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	request.Header.Set("Authorization", "Bearer "+truAdapter.token)
+	request.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	response, err := client.Do(request)
 	if err != nil {
 		return nil, fmt.Errorf("failed to fetch ratings: %w", err)
 	}

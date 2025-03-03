@@ -8,7 +8,9 @@ import (
 )
 
 type Config struct {
-	DatabaseURL string
+	DatabaseURL     string
+	TruAdapterURL   string
+	TruAdapterToken string
 }
 
 func LoadConfig() (*Config, error) {
@@ -19,5 +21,13 @@ func LoadConfig() (*Config, error) {
 
 	DatabaseURL := os.Getenv("DATABASE_URL")
 
-	return &Config{DatabaseURL: DatabaseURL}, nil
+	// Adapters
+	TruAdapterURL := os.Getenv("TRU_ADAPTER_URL")
+	TruAdapterToken := os.Getenv("TRU_ADAPTER_TOKEN")
+
+	return &Config{
+		DatabaseURL:     DatabaseURL,
+		TruAdapterURL:   TruAdapterURL,
+		TruAdapterToken: TruAdapterToken,
+	}, nil
 }

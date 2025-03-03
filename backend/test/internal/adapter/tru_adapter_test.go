@@ -52,7 +52,13 @@ func TestTruAdapter_FetchData(t *testing.T) {
 	dataSourceRepoErr := dataSourceRepo.Create(&dataSource)
 
 	pageCount := 0
+	mockToken := "mock-bearer-token"
+
 	mockServer := httptest.NewServer(http.HandlerFunc(func(responseWriter http.ResponseWriter, request *http.Request) {
+		authHeader := request.Header.Get("Authorization")
+		expectedAuth := "Bearer " + mockToken
+		assert.Equal(t, expectedAuth, authHeader, "Authorization header should contain the correct Bearer token")
+
 		responseWriter.Header().Set("Content-Type", "application/json")
 		responseWriter.WriteHeader(http.StatusOK)
 
@@ -65,7 +71,7 @@ func TestTruAdapter_FetchData(t *testing.T) {
 	}))
 	defer mockServer.Close()
 
-	adapter := adapters.NewTruAdapter(mockServer.URL, analystRatingsService, dataSource.ID)
+	adapter := adapters.NewTruAdapter(mockServer.URL, mockToken, analystRatingsService, dataSource.ID)
 
 	_, adapterErr := adapter.FetchData()
 

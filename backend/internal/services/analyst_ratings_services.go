@@ -1,8 +1,8 @@
 package services
 
 import (
-	"data-loader/internal/models"
-	"data-loader/internal/repositories"
+	"backend/internal/models"
+	"backend/internal/repositories"
 )
 
 type AnalystRatingsService struct {

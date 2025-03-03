@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"data-loader/internal/database"
+	"backend/internal/database"
 )
 
 func TestDatabaseConnection(t *testing.T) {

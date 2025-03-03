@@ -1,9 +1,9 @@
 package test
 
 import (
-	"data-loader/internal/database"
-	"data-loader/internal/models"
-	"data-loader/internal/repositories"
+	"backend/internal/database"
+	"backend/internal/models"
+	"backend/internal/repositories"
 	"os"
 	"testing"
 	"time"
@@ -47,6 +47,7 @@ func TestAnalystRatingsRepository(t *testing.T) {
 	assert.Equal(t, "AAPL", fetchedRating.Ticker, "Fetched rating should match")
 	assert.Equal(t, dataSource.ID, fetchedRating.DataSourceID, "Should have correct foreign key")
 
-	db.Migrator().DropTable(&models.AnalystRating{}, &models.DataSource{})
+	dataSourceRepo.Delete(dataSource.ID)
+	db.Migrator().DropTable(&models.AnalystRating{}, &models.DataSource{}, &models.AdapterLog{})
 	os.Unsetenv("DATABASE_URL")
 }

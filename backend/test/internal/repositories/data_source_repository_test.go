@@ -1,9 +1,9 @@
 package test
 
 import (
-	"data-loader/internal/database"
-	"data-loader/internal/models"
-	"data-loader/internal/repositories"
+	"backend/internal/database"
+	"backend/internal/models"
+	"backend/internal/repositories"
 	"os"
 	"testing"
 
@@ -30,6 +30,7 @@ func TestDataSourceRepository(t *testing.T) {
 	assert.NoError(t, fetchErr, "Should fetch data source without error")
 	assert.Equal(t, "API-TEST", fetchedSource.Name, "Fetched data source should match")
 
-	db.Migrator().DropTable(&models.AnalystRating{}, &models.DataSource{})
+	dataSourceRepo.Delete(dataSource.ID)
+	db.Migrator().DropTable(&models.AnalystRating{}, &models.DataSource{}, &models.AdapterLog{})
 	os.Unsetenv("DATABASE_URL")
 }

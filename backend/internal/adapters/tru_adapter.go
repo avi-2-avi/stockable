@@ -1,9 +1,9 @@
 package adapters
 
 import (
-	"data-loader/internal/models"
-	"data-loader/internal/services"
-	"data-loader/internal/utils"
+	"backend/internal/models"
+	"backend/internal/services"
+	"backend/internal/utils"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -30,7 +30,7 @@ func (truAdapter *TruAdapter) FetchData() ([]models.AnalystRating, error) {
 	var allRatings []models.AnalystRating
 	nextPage := ""
 	// Temporal counter
-	count := 0
+	// count := 0
 
 	for {
 		url := truAdapter.buildUrl(nextPage)
@@ -54,10 +54,10 @@ func (truAdapter *TruAdapter) FetchData() ([]models.AnalystRating, error) {
 		nextPage = newNextPage
 
 		// Testing if the loop is working
-		count++
-		if count > 10 {
-			break
-		}
+		// count++
+		// if count > 10 {
+		// 	break
+		// }
 	}
 
 	err := truAdapter.service.SaveAnalystRatingsBatch(allRatings)

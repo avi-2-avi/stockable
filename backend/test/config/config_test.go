@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"data-loader/config"
+	"backend/config"
 )
 
 func TestLoadConfigWithEnvFile(t *testing.T) {

@@ -1,12 +1,10 @@
 package main
 
 import (
-	"data-loader/config"
-	"data-loader/internal/adapters"
-	"data-loader/internal/database"
-	"data-loader/internal/models"
-	"data-loader/internal/repositories"
-	"data-loader/internal/services"
+	"backend/config"
+	"backend/internal/database"
+	"backend/internal/manager"
+	"flag"
 	"fmt"
 )
 
@@ -31,25 +29,12 @@ func main() {
 		return
 	}
 
-	dataSourceRepo := repositories.NewDataSourceRepository(db)
-	dataSource := models.DataSource{Name: "TruAdapter"}
+	adapterName := flag.String("name", "", "Specify adapter name to run individually")
+	flag.Parse()
 
-	err = dataSourceRepo.Create(&dataSource)
+	adapterManager := manager.NewAdapterManager(db, config)
+	err = adapterManager.RunAdapters(*adapterName)
 	if err != nil {
-		fmt.Println("Failed to register data source:", err)
-		return
-	}
-
-	analystRatingsRepo := repositories.NewAnalystRatingsRepository(db)
-	analystRatingsService := services.NewAnalystRatingsService(analystRatingsRepo)
-
-	adapter := adapters.NewTruAdapter(config.TruAdapterURL, config.TruAdapterToken, analystRatingsService, dataSource.ID)
-
-	fmt.Println("Fetching analyst ratings from TruAdapter...")
-	_, err = adapter.FetchData()
-	if err != nil {
-		fmt.Printf("Error fetching ratings: %v\n", err)
-	} else {
-		fmt.Println("Successfully loaded analyst ratings into the database.")
+		fmt.Println("Error running adapters:", err)
 	}
 }

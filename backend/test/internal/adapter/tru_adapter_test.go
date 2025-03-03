@@ -1,11 +1,11 @@
 package test
 
 import (
-	"data-loader/internal/adapters"
-	"data-loader/internal/database"
-	"data-loader/internal/models"
-	"data-loader/internal/repositories"
-	"data-loader/internal/services"
+	"backend/internal/adapters"
+	"backend/internal/database"
+	"backend/internal/models"
+	"backend/internal/repositories"
+	"backend/internal/services"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -45,7 +45,6 @@ func TestTruAdapter_FetchData(t *testing.T) {
 
 	dataSourceRepo := repositories.NewDataSourceRepository(db)
 	analystRatingsRepo := repositories.NewAnalystRatingsRepository(db)
-
 	analystRatingsService := services.NewAnalystRatingsService(analystRatingsRepo)
 
 	dataSource := models.DataSource{Name: "TruAdapter"}
@@ -89,6 +88,6 @@ func TestTruAdapter_FetchData(t *testing.T) {
 	assert.Equal(t, "Schrödinger", savedRatings[0].Company, "Company name should match")
 	assert.Equal(t, dataSource.ID, savedRatings[0].DataSourceID, "Should have correct DataSourceID")
 
-	db.Migrator().DropTable(&models.AnalystRating{}, &models.DataSource{})
+	db.Migrator().DropTable(&models.AnalystRating{}, &models.DataSource{}, &models.AdapterLog{})
 	os.Unsetenv("DATABASE_URL")
 }

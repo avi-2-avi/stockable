@@ -3,30 +3,34 @@ package test
 import (
 	"backend/internal/database"
 	"backend/internal/models"
+	"backend/internal/repositories"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm/logger"
 )
 
-func TestMigrations(t *testing.T) {
+func TestAdapterLogRepository(t *testing.T) {
 	os.Setenv("DATABASE_URL", "postgresql://root@localhost:26257/defaultdb?sslmode=disable")
 	db, dbErr := database.Connect()
 	db.Config.Logger = logger.Default.LogMode(logger.Silent)
-
 	migrationErr := database.Migrate(db)
-	hasAnalystRatings := db.Migrator().HasTable(&models.AnalystRating{})
-	hasDataSource := db.Migrator().HasTable(&models.DataSource{})
-	hasLogRepository := db.Migrator().HasTable(&models.AdapterLog{})
+	adapterLogRepo := repositories.NewAdapterLogRepository(db)
+	adapterLog := models.AdapterLog{
+		AdapterName: "API-TEST",
+		RunAt:       time.Now(),
+	}
+
+	adapterLogRepoErr := adapterLogRepo.Create(&adapterLog)
 
 	assert.NoError(t, dbErr, "Database connection should not return an error")
 	assert.NotNil(t, db, "Database connection should not be nil")
 	assert.NoError(t, migrationErr, "Database migration should not return an error")
-	assert.True(t, hasAnalystRatings, "rating_history table should exist")
-	assert.True(t, hasDataSource, "data_source table should exist")
-	assert.True(t, hasLogRepository, "log_repository table should exist")
+	assert.NoError(t, adapterLogRepoErr, "Should create data source without error")
 
+	adapterLogRepo.Delete(adapterLog.ID)
 	db.Migrator().DropTable(&models.AnalystRating{}, &models.DataSource{}, &models.AdapterLog{})
 	os.Unsetenv("DATABASE_URL")
 }

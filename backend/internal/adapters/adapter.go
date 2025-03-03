@@ -1,6 +1,6 @@
 package adapters
 
-import "data-loader/internal/models"
+import "backend/internal/models"
 
 type RatingAdapter interface {
 	FetchData() ([]models.AnalystRating, error)

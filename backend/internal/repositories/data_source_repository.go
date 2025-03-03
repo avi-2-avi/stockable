@@ -1,7 +1,7 @@
 package repositories
 
 import (
-	"data-loader/internal/models"
+	"backend/internal/models"
 
 	"gorm.io/gorm"
 )
@@ -22,4 +22,14 @@ func (r *DataSourceRepository) GetByID(id uint) (*models.DataSource, error) {
 	var dataSource models.DataSource
 	err := r.db.First(&dataSource, id).Error
 	return &dataSource, err
+}
+
+func (r *DataSourceRepository) GetByName(name string) (*models.DataSource, error) {
+	var dataSource models.DataSource
+	err := r.db.Where("name = ?", name).First(&dataSource).Error
+	return &dataSource, err
+}
+
+func (r *DataSourceRepository) Delete(id uint) error {
+	return r.db.Delete(&models.DataSource{}, id).Error
 }

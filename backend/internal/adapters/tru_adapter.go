@@ -13,11 +13,11 @@ import (
 type TruAdapter struct {
 	apiURL       string
 	token        string
-	service      *services.AnalystRatingsService
+	service      services.AnalystRatingsService
 	dataSourceID uint
 }
 
-func NewTruAdapter(apiURL string, token string, service *services.AnalystRatingsService, dataSourceID uint) RatingAdapter {
+func NewTruAdapter(apiURL string, token string, service services.AnalystRatingsService, dataSourceID uint) RatingAdapter {
 	return &TruAdapter{
 		apiURL:       apiURL,
 		token:        token,
@@ -29,8 +29,9 @@ func NewTruAdapter(apiURL string, token string, service *services.AnalystRatings
 func (truAdapter *TruAdapter) FetchData() ([]models.AnalystRating, error) {
 	var allRatings []models.AnalystRating
 	nextPage := ""
+
 	// Temporal counter
-	// count := 0
+	count := 0
 
 	for {
 		url := truAdapter.buildUrl(nextPage)
@@ -54,10 +55,11 @@ func (truAdapter *TruAdapter) FetchData() ([]models.AnalystRating, error) {
 		nextPage = newNextPage
 
 		// Testing if the loop is working
-		// count++
-		// if count > 10 {
-		// 	break
-		// }
+
+		count++
+		if count > 10 {
+			break
+		}
 	}
 
 	err := truAdapter.service.SaveAnalystRatingsBatch(allRatings)

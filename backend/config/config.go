@@ -9,6 +9,7 @@ import (
 
 type Config struct {
 	DatabaseURL     string
+	AllowedOrigin   string
 	TruAdapterURL   string
 	TruAdapterToken string
 }
@@ -20,6 +21,7 @@ func LoadConfig() (*Config, error) {
 	}
 
 	DatabaseURL := os.Getenv("DATABASE_URL")
+	AllowedOrigin := os.Getenv("ALLOWED_ORIGIN")
 
 	// Adapters
 	TruAdapterURL := os.Getenv("TRU_ADAPTER_URL")
@@ -27,6 +29,7 @@ func LoadConfig() (*Config, error) {
 
 	return &Config{
 		DatabaseURL:     DatabaseURL,
+		AllowedOrigin:   AllowedOrigin,
 		TruAdapterURL:   TruAdapterURL,
 		TruAdapterToken: TruAdapterToken,
 	}, nil

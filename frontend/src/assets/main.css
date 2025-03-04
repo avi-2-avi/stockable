@@ -1,0 +1,28 @@
+@import './base.css';
+
+@import "tailwindcss";
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme {
+    --color-stock-50: #fff6ed;
+    --color-stock-100: #ffead4;
+    --color-stock-200: #ffd0a8;
+    --color-stock-300: #ffaf71;
+    --color-stock-400: #ff8237;
+    --color-stock-500: #fe6011;
+    --color-stock-600: #ef4607;
+    --color-stock-700: #c63108;
+    --color-stock-800: #9d280f;
+    --color-stock-900: #7e2410;
+    --color-stock-950: #440e06;
+
+    --color-base: #FFFFFF;
+    --color-card: #FFFFFF;
+    --color-border: #D4D4D8;
+}
+
+.dark {
+    --color-base: #0E0E11;
+    --color-card: #18181C;
+    --color-border: #27272B;
+}

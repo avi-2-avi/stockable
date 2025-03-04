@@ -1,10 +1,12 @@
 <template>
   <DefaultLayout>
+    <p class="headline">Home</p>
     <h1 class="text-stock-500">Home</h1>
     <button @click="toggleDarkMode" class="px-4 py-2 mt-4 bg-stock-500 text-white rounded">
       Toggle Dark Mode
     </button>
     <div>
+      <p class="text-2xl font-open-sans">HOLA QUE HACE</p>
       <div class="bg-base h-20 w-20">
       </div>
     </div>

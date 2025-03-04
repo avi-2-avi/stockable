@@ -33,3 +33,12 @@ func (r *AnalystRatingsRepository) GetByID(id uint) (*models.AnalystRating, erro
 	}
 	return &rating, nil
 }
+
+func (r *AnalystRatingsRepository) GetAll() ([]models.AnalystRating, error) {
+	var ratings []models.AnalystRating
+	err := r.db.Find(&ratings).Error
+	if err != nil {
+		return nil, err
+	}
+	return ratings, nil
+}

@@ -1,6 +1,5 @@
 <template>
   <BaseNavbar>
-
   </BaseNavbar>
 </template>
 

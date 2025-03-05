@@ -1,9 +1,13 @@
 <template>
   <div class="h-screen flex flex-col items-center">
     <Navbar />
-    <div class="flex flex-col mx-auto pt-20 flex-1 container w-full space-y-4">
+    <div class="flex flex-col mx-auto pt-20 flex-1 container w-full space-y-2">
       <h3>{{ pageTitle }}</h3>
-      <SelectDropdown id="source-select" label="Select a data source" v-model="selectedSource" :options="sources" />
+      <div>
+        <p>Select the source:</p>
+        <SelectDropdown id="source-select" label="Select a data source" v-model="selectedSource" :options="sources"
+          position="top" />
+      </div>
       <slot />
     </div>
   </div>

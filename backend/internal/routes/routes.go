@@ -46,7 +46,7 @@ func CORSMiddleware() gin.HandlerFunc {
 
 	allowedOrigin := config.AllowedOrigin
 	if allowedOrigin == "" {
-		allowedOrigin = "http://localhost:3000"
+		allowedOrigin = "http://localhost:5173"
 	}
 
 	return func(context *gin.Context) {

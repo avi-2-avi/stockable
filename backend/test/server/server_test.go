@@ -25,7 +25,7 @@ func TestServerHealthCheck(t *testing.T) {
 
 func TestGetAnalystRatings(t *testing.T) {
 	mockEnvContent := "DATABASE_URL=postgresql://root@localhost:26257/defaultdb?sslmode=disable\n" +
-		"ALLOWED_ORIGIN=http://localhost:3000\n" +
+		"ALLOWED_ORIGIN=http://localhost:5173\n" +
 		"TRU_ADAPTER_URL=http://localhost:8080\n" +
 		"TRU_ADAPTER_TOKEN=1234567890"
 

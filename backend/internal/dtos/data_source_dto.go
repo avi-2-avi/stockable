@@ -1,6 +1,8 @@
 package dtos
 
+import "github.com/google/uuid"
+
 type DataSourceDTO struct {
-	ID   uint   `json:"id"`
-	Name string `json:"name"`
+	ID   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
 }

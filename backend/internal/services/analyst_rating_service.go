@@ -8,7 +8,7 @@ import (
 type AnalystRatingsService interface {
 	SaveAnalystRating(rating *models.AnalystRating) error
 	SaveAnalystRatingsBatch(ratings []models.AnalystRating) error
-	GetAll(sortOrder, sortBy, sourceID string, filters map[string]string, page, limit int) ([]models.AnalystRating, error)
+	GetAll(sortOrder, sortBy, sourceID string, filters map[string]string, page, limit int) ([]models.AnalystRating, int64, error)
 	GetRecommendations() ([]models.AnalystRating, error)
 }
 
@@ -30,7 +30,7 @@ func (service *analystRatingsService) SaveAnalystRatingsBatch(ratings []models.A
 	return service.ratingRepo.CreateBatch(ratings)
 }
 
-func (service *analystRatingsService) GetAll(sortOrder, sortBy, sourceID string, filters map[string]string, page, limit int) ([]models.AnalystRating, error) {
+func (service *analystRatingsService) GetAll(sortOrder, sortBy, sourceID string, filters map[string]string, page, limit int) ([]models.AnalystRating, int64, error) {
 	return service.ratingRepo.GetAll(sortOrder, sortBy, sourceID, filters, page, limit)
 }
 

@@ -3,11 +3,12 @@ package models
 import (
 	"time"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type AnalystRating struct {
-	gorm.Model
+	ID         uuid.UUID `json:"id" gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
 	Ticker     string    `gorm:"not null"`
 	TargetFrom float64   `gorm:"not null"`
 	TargetTo   float64   `gorm:"not null"`
@@ -17,7 +18,15 @@ type AnalystRating struct {
 	RatingFrom string    `gorm:"not null"`
 	RatingTo   string    `gorm:"not null"`
 	RatedAt    time.Time `gorm:"not null"`
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	DeletedAt  gorm.DeletedAt `gorm:"index"`
 
-	DataSourceID uint       `gorm:"not null"`
+	DataSourceID uuid.UUID  `gorm:"not null"`
 	DataSource   DataSource `gorm:"foreignKey:DataSourceID"`
+}
+
+func (r *AnalystRating) BeforeCreate(tx *gorm.DB) (err error) {
+	r.ID = uuid.New()
+	return
 }

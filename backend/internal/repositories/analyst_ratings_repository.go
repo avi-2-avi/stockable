@@ -35,21 +35,24 @@ func (r *AnalystRatingsRepository) GetByID(id uint) (*models.AnalystRating, erro
 	return &rating, nil
 }
 
-func (r *AnalystRatingsRepository) GetAll(sortOrder, sortBy, sourceID string, filters map[string]string, page, limit int) ([]models.AnalystRating, error) {
+func (r *AnalystRatingsRepository) GetAll(sortOrder, sortBy, sourceID string, filters map[string]string, page, limit int) ([]models.AnalystRating, int64, error) {
 	var ratings []models.AnalystRating
+	var total int64
 	query := r.db
 
-	sortBy = cleanSortColumn(sortBy)
 	query = applyFilters(query, sourceID, filters)
+	query.Model(&models.AnalystRating{}).Count(&total)
+
+	sortBy = cleanSortColumn(sortBy)
 	query = applySorting(query, sortBy, sortOrder)
 	query = applyPagination(query, page, limit)
 
 	err := query.Find(&ratings).Error
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	return ratings, nil
+	return ratings, total, nil
 }
 
 func cleanSortColumn(sortBy string) string {

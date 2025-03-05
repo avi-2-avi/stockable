@@ -1,9 +1,13 @@
 package dtos
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type AnalystRatingDTO struct {
-	ID         uint      `json:"id"`
+	ID         uuid.UUID `json:"id"`
 	Ticker     string    `json:"ticker"`
 	TargetFrom float64   `json:"target_from"`
 	TargetTo   float64   `json:"target_to"`

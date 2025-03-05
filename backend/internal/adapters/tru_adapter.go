@@ -8,16 +8,18 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type TruAdapter struct {
 	apiURL       string
 	token        string
 	service      services.AnalystRatingsService
-	dataSourceID uint
+	dataSourceID uuid.UUID
 }
 
-func NewTruAdapter(apiURL string, token string, service services.AnalystRatingsService, dataSourceID uint) RatingAdapter {
+func NewTruAdapter(apiURL string, token string, service services.AnalystRatingsService, dataSourceID uuid.UUID) RatingAdapter {
 	return &TruAdapter{
 		apiURL:       apiURL,
 		token:        token,

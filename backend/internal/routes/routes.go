@@ -25,6 +25,12 @@ func SetupRouter() *gin.Engine {
 func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 	router.Use(CORSMiddleware())
 
+	sourceRepo := repositories.NewDataSourceRepository(db)
+	sourceService := services.NewDataSourceService(sourceRepo)
+	sourceController := controllers.NewDataSourceController(sourceService)
+
+	router.GET("/sources", sourceController.GetSources)
+
 	ratingRepo := repositories.NewAnalystRatingsRepository(db)
 	ratingService := services.NewAnalystRatingsService(ratingRepo)
 	ratingController := controllers.NewAnalystRatingController(ratingService)

@@ -36,7 +36,9 @@ func (adapterManager *AdapterManager) RunAdapters(adapterName string) error {
 		truAdapterSource, err := adapterManager.dataSourceRepo.GetByName("TruAdapter")
 		if err != nil || truAdapterSource == nil {
 			fmt.Println("Creating DataSource entry for TruAdapter...")
-			truAdapterSource = &models.DataSource{Name: "TruAdapter"}
+			truAdapterSource = &models.DataSource{
+				Name: "TruAdapter",
+			}
 			adapterManager.dataSourceRepo.Create(truAdapterSource)
 		}
 

@@ -1,8 +1,15 @@
 package models
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type DataSource struct {
-	gorm.Model
-	Name string `gorm:"unique"`
+	ID        uint           `gorm:"primaryKey"`
+	Name      string         `gorm:"unique"`
+	CreateAt  time.Time      `gorm:"autoCreateTime"`
+	UpdateAt  time.Time      `gorm:"autoUpdateTime"`
+	DeletedAt gorm.DeletedAt `gorm:"index"`
 }

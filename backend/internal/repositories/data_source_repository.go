@@ -18,6 +18,12 @@ func (r *DataSourceRepository) Create(dataSource *models.DataSource) error {
 	return r.db.Create(dataSource).Error
 }
 
+func (r *DataSourceRepository) GetAll() ([]models.DataSource, error) {
+	var dataSources []models.DataSource
+	err := r.db.Find(&dataSources).Error
+	return dataSources, err
+}
+
 func (r *DataSourceRepository) GetByID(id uint) (*models.DataSource, error) {
 	var dataSource models.DataSource
 	err := r.db.First(&dataSource, id).Error

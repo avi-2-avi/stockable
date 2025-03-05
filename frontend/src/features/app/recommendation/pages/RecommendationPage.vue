@@ -1,6 +1,8 @@
 <template>
-    <div>Recommendation Page</div>
+    <AppLayout pageTitle="Recommendations">
+    </AppLayout>
 </template>
 
 <script setup lang="ts">
+import AppLayout from '@/layouts/AppLayout.vue'
 </script>

@@ -23,7 +23,7 @@ func (controller *DataSourceController) GetSources(context *gin.Context) {
 	sources, err := controller.SourceService.GetAll()
 	if err != nil {
 		utils.Respond(context, utils.APIResponse{
-			Code:    http.StatusInternalServerError,
+			Status:  http.StatusInternalServerError,
 			Message: "Failed to get sources",
 		})
 		return
@@ -38,8 +38,8 @@ func (controller *DataSourceController) GetSources(context *gin.Context) {
 	}
 
 	utils.Respond(context, utils.APIResponse{
-		Code:    http.StatusOK,
+		Status:  http.StatusOK,
 		Message: "Success",
-		Data:    sourceDTOs,
+		Body:    sourceDTOs,
 	})
 }

@@ -1,17 +1,66 @@
 <template>
-    <div class="max-w-2xl mx-auto">
-        <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-400">Select an
-            option</label>
-        <select id="countries">
-            <option selected>Choose a country</option>
-            <option value="US">United States</option>
-            <option value="CA">Canada</option>
-            <option value="FR">France</option>
-            <option value="DE">Germany</option>
-        </select>
-
+  <div class="max-w-xl">
+    <label :for="id" class="block pb-1">
+      {{ label }}
+    </label>
+    <div
+      class="w-full p-1.5 text-sm border border-border rounded-md bg-card dark:text-white flex justify-between items-center cursor-pointer"
+      @click="toggleDropdown">
+      {{ selectedLabel }}
+      <ChevronDown class="w-4 h-4 text-foreground" />
     </div>
+
+    <ul v-if="isOpen" class="absolute w-full max-w-xl mt-1 bg-card border border-border rounded-md shadow-md z-50">
+      <li v-for="option in options" :key="option.value" @click="selectOption(option.value)"
+        class="text-sm p-2 hover:bg-stock-200/50 cursor-pointer flex items-center">
+        <span>{{ option.label }}</span>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from 'vue'
+import { ChevronDown } from "lucide-vue-next";
+import type { Option } from '@/types/option.ts'
+
+const props = defineProps({
+  id: {
+    type: String,
+    default: 'select',
+  },
+  label: {
+    type: String,
+    required: true,
+  },
+  options: {
+    type: Array as () => Option[],
+    required: true,
+  },
+  modelValue: {
+    type: String,
+    required: true,
+  },
+  placeholder: {
+    type: String,
+    default: 'Select an option',
+  },
+})
+
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: string): void
+}>()
+
+const isOpen = ref(false);
+const selectedLabel = computed(() => props.options.find(o => o.value === props.modelValue)?.label || "Select an option");
+
+const toggleDropdown = () => {
+  isOpen.value = !isOpen.value;
+};
+
+const selectOption = (value: string) => {
+  emit('update:modelValue', value);
+  isOpen.value = false;
+};
+
 </script>

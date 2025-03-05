@@ -23,10 +23,10 @@ func NewAnalystRatingController(ratingService services.AnalystRatingsService) *A
 func (controller *AnalystRatingController) GetRatings(context *gin.Context) {
 	sortBy, sortOrder, sourceID, pageNumber, limitNumber, filters := parseQueryParams(context)
 
-	ratings, err := controller.RatingService.GetAll(sortOrder, sortBy, sourceID, filters, pageNumber, limitNumber)
+	ratings, total, err := controller.RatingService.GetAll(sortOrder, sortBy, sourceID, filters, pageNumber, limitNumber)
 	if err != nil {
 		utils.Respond(context, utils.APIResponse{
-			Code:    http.StatusInternalServerError,
+			Status:  http.StatusInternalServerError,
 			Message: "Failed to get ratings",
 		})
 		return
@@ -49,12 +49,12 @@ func (controller *AnalystRatingController) GetRatings(context *gin.Context) {
 	}
 
 	utils.Respond(context, utils.APIResponse{
-		Code:    http.StatusOK,
+		Status:  http.StatusOK,
 		Message: "Success",
-		Data: gin.H{
+		Body: gin.H{
 			"page":    pageNumber,
 			"limit":   limitNumber,
-			"total":   len(ratings),
+			"total":   total,
 			"ratings": ratingDTOs,
 		},
 	})

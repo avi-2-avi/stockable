@@ -3,11 +3,11 @@ package utils
 import "github.com/gin-gonic/gin"
 
 type APIResponse struct {
-	Code    int         `json:"code"`
+	Status  int         `json:"status"`
 	Message string      `json:"message"`
-	Data    interface{} `json:"data,omitempty"`
+	Body    interface{} `json:"body,omitempty"`
 }
 
 func Respond(context *gin.Context, response APIResponse) {
-	context.JSON(response.Code, response)
+	context.JSON(response.Status, response)
 }

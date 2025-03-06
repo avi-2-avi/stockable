@@ -41,11 +41,11 @@ const props = defineProps({
   },
   customClass: {
     type: String,
-    default: 'w-full max-w-xl',
+    default: 'w-full max-w-lg',
   },
   dropdownClass: {
     type: String,
-    default: 'w-full max-w-xl',
+    default: 'w-full max-w-lg',
   },
   position: {
     type: String as () => "top" | "bottom",

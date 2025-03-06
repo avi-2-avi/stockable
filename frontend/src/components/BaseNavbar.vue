@@ -1,26 +1,29 @@
 <template>
-    <nav class="w-full fixed top-0 left-0 z-50 bg-stock-200/50 backdrop-blur-lg p-4 flex justify-between items-center">
-      <div class="flex items-center">
-        <div class="flex items-center">
-          <img src="@/assets/logo.svg" alt="Logo" class="h-10 w-auto" />
-          <p class="logo pl-2.5">Stockable</p>
-        </div>
+  <nav class="w-full fixed top-0 left-0 z-50 bg-stock-200/50 backdrop-blur-lg p-4 flex justify-between items-center">
+    <div class="flex items-center">
+      <div @click="redirectToDefault" class="flex items-center cursor-pointer">
+        <img src="@/assets/logo.svg" alt="Logo" class="h-10 w-auto" />
+        <p class="logo pl-2.5">Stockable</p>
       </div>
+    </div>
 
-      <div class="flex items-center space-x-4">
-        <slot />
+    <div class="flex items-center space-x-4">
+      <slot />
 
-        <button @click="toggleTheme" class="p-2 rounded transition text-foreground">
-          <Sun v-if="isDark" class="w-6 h-6" />
-          <Moon v-else class="w-6 h-6" />
-        </button>
-      </div>
-    </nav>
+      <button @click="toggleTheme" class="p-2 rounded transition text-foreground hidden sm:block">
+        <Sun v-if="isDark" class="w-6 h-6" />
+        <Moon v-else class="w-6 h-6" />
+      </button>
+    </div>
+  </nav>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
 import { Sun, Moon } from "lucide-vue-next";
+import { useRouter } from "vue-router";
+
+const router = useRouter();
 
 const isDark = ref(false);
 
@@ -37,4 +40,9 @@ onMounted(() => {
     document.documentElement.classList.add("dark");
   }
 })
+
+const redirectToDefault = () => {
+  router.push('/');
+}
+
 </script>

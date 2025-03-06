@@ -1,6 +1,6 @@
 <template>
     <button @click="handleClick" :class="buttonClasses" :disabled="disabled"
-        class="flex items-center justify-center rounded-md transition-all focus:outline-none">
+        class="cursor-pointer flex items-center font-semibold justify-center rounded-md transition-all focus:outline-none">
         <slot name="icon-start"></slot>
         <span class="mx-1">{{ label }}</span>
         <slot name="icon-end"></slot>
@@ -42,7 +42,7 @@ const sizeClasses: Record<typeof sizes[number], string> = {
 }
 
 const variantClasses: Record<typeof variants[number], string> = {
-    solid: 'bg-stock-400 text-base hover:bg-stock-500',
+    solid: 'bg-stock-400 text-black hover:bg-stock-500',
     subtle: 'bg-stock-200 hover:bg-stock-300 text-black',
     surface: 'bg-stock-200 border border-border text-black hover:bg-stock-300',
     outline: 'border border-border text-foreground hover:bg-stock-200',

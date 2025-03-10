@@ -36,6 +36,7 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 	ratingController := controllers.NewAnalystRatingController(ratingService)
 
 	router.GET("/ratings", ratingController.GetRatings)
+	router.GET("/ratings/indicators", ratingController.GetRatingsIndicators)
 }
 
 func CORSMiddleware() gin.HandlerFunc {

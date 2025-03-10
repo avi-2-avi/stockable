@@ -8,3 +8,12 @@ export const formatNumberToCurrency = (value: number): string => {
 export const formatStringToDate = (value: string): string => {
   return new Date(value).toLocaleDateString()
 }
+
+export const formatActionString = (value: string): string => {
+  const [action] = value.split('by')
+  return action.trim().replace(/^\w/, (c) => c.toUpperCase())
+}
+
+export const formatNumberToPercentage = (value: number): string => {
+  return `${value.toFixed(2)}%`
+}

@@ -8,5 +8,7 @@ export interface Rating {
   brokerage: string
   rating_from: string
   rating_to: string
+  rating_increase_percentage: number
+  combined_prediction_index: number
   rated_at: string
 }

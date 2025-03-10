@@ -3,6 +3,7 @@ package repositories
 import (
 	"backend/internal/models"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -18,7 +19,13 @@ func (r *DataSourceRepository) Create(dataSource *models.DataSource) error {
 	return r.db.Create(dataSource).Error
 }
 
-func (r *DataSourceRepository) GetByID(id uint) (*models.DataSource, error) {
+func (r *DataSourceRepository) GetAll() ([]models.DataSource, error) {
+	var dataSources []models.DataSource
+	err := r.db.Find(&dataSources).Error
+	return dataSources, err
+}
+
+func (r *DataSourceRepository) GetByID(id uuid.UUID) (*models.DataSource, error) {
 	var dataSource models.DataSource
 	err := r.db.First(&dataSource, id).Error
 	return &dataSource, err
@@ -27,9 +34,15 @@ func (r *DataSourceRepository) GetByID(id uint) (*models.DataSource, error) {
 func (r *DataSourceRepository) GetByName(name string) (*models.DataSource, error) {
 	var dataSource models.DataSource
 	err := r.db.Where("name = ?", name).First(&dataSource).Error
-	return &dataSource, err
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &dataSource, nil
 }
 
-func (r *DataSourceRepository) Delete(id uint) error {
+func (r *DataSourceRepository) Delete(id uuid.UUID) error {
 	return r.db.Delete(&models.DataSource{}, id).Error
 }

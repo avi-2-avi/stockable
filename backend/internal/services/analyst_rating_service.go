@@ -1,6 +1,7 @@
 package services
 
 import (
+	"backend/internal/dtos"
 	"backend/internal/models"
 	"backend/internal/repositories"
 )
@@ -8,7 +9,10 @@ import (
 type AnalystRatingsService interface {
 	SaveAnalystRating(rating *models.AnalystRating) error
 	SaveAnalystRatingsBatch(ratings []models.AnalystRating) error
-	GetAll() ([]models.AnalystRating, error)
+	GetAll(sortOrder, sortBy, sourceID string, filters map[string]string, page, limit int) ([]models.AnalystRating, int64, error)
+	GetIndicators(sourceID string) (dtos.AnalystRatingIndicatorsDTO, error)
+	GetRecommendations() ([]models.AnalystRating, error)
+	GetMinMaxCPI() (float64, float64, error)
 }
 
 type analystRatingsService struct {
@@ -29,6 +33,20 @@ func (service *analystRatingsService) SaveAnalystRatingsBatch(ratings []models.A
 	return service.ratingRepo.CreateBatch(ratings)
 }
 
-func (service *analystRatingsService) GetAll() ([]models.AnalystRating, error) {
-	return service.ratingRepo.GetAll()
+func (service *analystRatingsService) GetAll(sortOrder, sortBy, sourceID string, filters map[string]string, page, limit int) ([]models.AnalystRating, int64, error) {
+	return service.ratingRepo.GetAll(sortOrder, sortBy, sourceID, filters, page, limit)
+}
+
+func (service *analystRatingsService) GetMinMaxCPI() (float64, float64, error) {
+	return service.ratingRepo.GetMinMaxCPI()
+}
+
+func (service *analystRatingsService) GetIndicators(sourceID string) (dtos.AnalystRatingIndicatorsDTO, error) {
+	return service.ratingRepo.GetIndicators(sourceID)
+}
+
+// TODO: Implement the GetRecommendations method
+
+func (service *analystRatingsService) GetRecommendations() ([]models.AnalystRating, error) {
+	return service.ratingRepo.GetRecommendations()
 }

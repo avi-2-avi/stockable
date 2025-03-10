@@ -1,94 +1,62 @@
 package manager
 
 import (
-	"backend/config"
-	"backend/internal/adapters"
 	"backend/internal/models"
 	"backend/internal/repositories"
-	"backend/internal/services"
 	"fmt"
-	"strings"
 	"time"
 
 	"gorm.io/gorm"
 )
 
 type AdapterManager struct {
-	db             *gorm.DB
-	config         *config.Config
+	adapterFactory *AdapterFactory
 	dataSourceRepo *repositories.DataSourceRepository
 	adapterLogRepo *repositories.AdapterLogRepository
 }
 
-func NewAdapterManager(db *gorm.DB, config *config.Config) *AdapterManager {
+func NewAdapterManager(factory *AdapterFactory, db *gorm.DB) *AdapterManager {
 	return &AdapterManager{
-		db:             db,
-		config:         config,
+		adapterFactory: factory,
 		dataSourceRepo: repositories.NewDataSourceRepository(db),
 		adapterLogRepo: repositories.NewAdapterLogRepository(db),
 	}
 }
 
-func (adapterManager *AdapterManager) RunAdapters(adapterName string) error {
-	adaptersToRun := make(map[string]func() adapters.RatingAdapter)
+func (m *AdapterManager) RunAdapters(adapterName string) error {
+	adapterNames := []string{"TruAdapter", "DummyAdapter"} // Add new adapters here
 
-	adaptersToRun["TruAdapter"] = func() adapters.RatingAdapter {
-		truAdapterSource, err := adapterManager.dataSourceRepo.GetByName("TruAdapter")
-		if err != nil || truAdapterSource == nil {
-			fmt.Println("Creating DataSource entry for TruAdapter...")
-			truAdapterSource = &models.DataSource{Name: "TruAdapter"}
-			adapterManager.dataSourceRepo.Create(truAdapterSource)
-		}
-
-		analystRatingsRepo := repositories.NewAnalystRatingsRepository(adapterManager.db)
-		analystRatingsService := services.NewAnalystRatingsService(analystRatingsRepo)
-
-		return adapters.NewTruAdapter(
-			adapterManager.config.TruAdapterURL,
-			adapterManager.config.TruAdapterToken,
-			analystRatingsService,
-			truAdapterSource.ID,
-		)
-	}
-
-	if adapterName == "" {
-		fmt.Println("Running all adapters...")
-	} else {
+	if adapterName != "" {
 		fmt.Printf("Running adapter: %s...\n", adapterName)
+		adapterNames = []string{adapterName}
+	} else {
+		fmt.Println("Running all adapters...")
 	}
 
-	for key, createAdapter := range adaptersToRun {
-		if adapterName != "" && !strings.EqualFold(adapterName, key) {
-			continue
-		}
-
-		dataSource, err := adapterManager.dataSourceRepo.GetByName(key)
-		if err != nil || dataSource == nil {
-			fmt.Printf("Creating DataSource entry for %s...\n", key)
-			dataSource = &models.DataSource{Name: key}
-			adapterManager.dataSourceRepo.Create(dataSource)
-		}
-
-		adapter := createAdapter()
+	for _, name := range adapterNames {
+		adapter := m.adapterFactory.CreateAdapter(name)
 		if adapter == nil {
-			fmt.Printf("ERROR: Adapter factory returned nil for %s\n", key)
+			fmt.Printf("ERROR: No adapter found for %s\n", name)
 			continue
 		}
-		fmt.Printf("Adapter created: %+v\n", adapter)
 
-		_, err = adapter.FetchData()
+		_, err := adapter.FetchData()
 		if err != nil {
-			fmt.Printf("Error fetching ratings for %s: %v\n", key, err)
+			fmt.Printf("Error fetching ratings for %s: %v\n", name, err)
 			continue
 		}
 
-		log := &models.AdapterLog{
-			AdapterName: key,
-			RunAt:       time.Now(),
-		}
-		adapterManager.adapterLogRepo.Create(log)
-		fmt.Printf("Successfully loaded analyst ratings from %s.\n", key)
+		m.logAdapterRun(name)
+		fmt.Printf("Successfully loaded analyst ratings from %s.\n", name)
 	}
 
 	return nil
+}
+
+func (m *AdapterManager) logAdapterRun(name string) {
+	log := &models.AdapterLog{
+		AdapterName: name,
+		RunAt:       time.Now(),
+	}
+	m.adapterLogRepo.Create(log)
 }

@@ -28,6 +28,7 @@
                 </form>
             </Card>
         </div>
+        <AuthModal v-if="authError" :message="authError" @close="authError = ''" />
     </AuthLayout>
 </template>
 
@@ -37,6 +38,7 @@ import AuthLayout from '@/layouts/AuthLayout.vue';
 import Card from '@/components/Card.vue';
 import Button from '@/components/Button.vue';
 import BaseInput from '@/components/Input.vue';
+import AuthModal from '../components/AuthModal.vue';
 import { validateAuthForm } from '@/utils/validation.ts';
 import { useAuthStore } from '@/store/authStore';
 
@@ -48,22 +50,27 @@ const form = ref({
     password: ""
 });
 const errors = ref<Record<string, string>>({});
+const authError = ref<string | null>(null);
 
 const toggleMode = () => {
     isSignup.value = !isSignup.value;
     errors.value = {}; // Reset errors when switching
+    authError.value = null;
 };
 
 const handleSubmit = async () => {
     errors.value = validateAuthForm(form.value, isSignup.value);
+    if (Object.keys(errors.value).length > 0) return;
+
     try {
         if (isSignup.value) {
-            await authStore.register(form.value.fullName, form.value.email, form.value.password)
+            await authStore.register(form.value.fullName, form.value.email, form.value.password);
         } else {
-            await authStore.login(form.value.email, form.value.password)
+            await authStore.login(form.value.email, form.value.password);
         }
-    } catch (error) {
-        console.error(error)
+    } catch (error: any) {
+        console.error(error);
+        authError.value = error?.message || "An unexpected error occurred. Please try again.";
     }
 };
 </script>

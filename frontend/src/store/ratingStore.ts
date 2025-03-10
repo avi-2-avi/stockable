@@ -12,7 +12,7 @@ export const useRatingStore = defineStore('rating', () => {
 
   const page = ref(1)
   const limit = ref(10)
-  const sortBy = ref<string>('rated_at')
+  const sortBy = ref<string>('combined_prediction_index')
   const sortOrder = ref<'asc' | 'desc'>('desc')
   const filters = ref<Record<string, string>>({})
 

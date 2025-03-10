@@ -109,18 +109,29 @@ func (truAdapter *TruAdapter) parseResponse(httpResponse *http.Response) ([]mode
 	var ratings []models.AnalystRating
 	for _, item := range response.Items {
 		parsedTime, _ := time.Parse(time.RFC3339, item.Time)
-		ratings = append(ratings, models.AnalystRating{
-			Ticker:       item.Ticker,
-			TargetFrom:   utils.ParsePrice(item.TargetFrom),
-			TargetTo:     utils.ParsePrice(item.TargetTo),
-			Company:      item.Company,
-			Action:       item.Action,
-			Brokerage:    item.Brokerage,
-			RatingFrom:   item.RatingFrom,
-			RatingTo:     item.RatingTo,
-			RatedAt:      parsedTime,
-			DataSourceID: truAdapter.dataSourceID,
-		})
+
+		targetFrom := utils.ParsePrice(item.TargetFrom)
+		targetTo := utils.ParsePrice(item.TargetTo)
+
+		rating := models.AnalystRating{
+			Ticker:                     item.Ticker,
+			TargetFrom:                 targetFrom,
+			TargetTo:                   targetTo,
+			Company:                    item.Company,
+			Action:                     item.Action,
+			Brokerage:                  item.Brokerage,
+			RatingFrom:                 item.RatingFrom,
+			RatingTo:                   item.RatingTo,
+			RatedAt:                    parsedTime,
+			DataSourceID:               truAdapter.dataSourceID,
+			ActionImpactScore:          utils.CalculateActionImpactScore(item.Action),
+			RatingChangeImpact:         utils.CalculateRatingChangeImpact(item.RatingFrom, item.RatingTo),
+			TargetAdjustmentPercentage: utils.CalculateTargetAdjustment(targetFrom, targetTo),
+		}
+
+		rating.CombinedPredictionIndex = utils.CalculateCPI(rating.ActionImpactScore, rating.RatingChangeImpact, rating.TargetAdjustmentPercentage)
+
+		ratings = append(ratings, rating)
 	}
 
 	return ratings, response.NextPage, nil

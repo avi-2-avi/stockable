@@ -22,7 +22,17 @@
             <tbody>
                 <tr v-for="rating in ratings" :key="rating.id" class="odd:bg-stock-200/30">
                     <td v-for="column in columns" :key="column.id" class="border-border border-y px-4 py-2">
-                        {{ formatValue(rating[column.id], column.type) }}
+                        <template v-if="column.render">
+                            <span v-if="column.render(rating[column.id as keyof Rating])?.text">
+                                {{ column.render(rating[column.id as keyof Rating])?.text }}
+                            </span>
+                            <component v-else-if="column.render(rating[column.id as keyof Rating])?.component"
+                                :is="column.render(rating[column.id as keyof Rating])?.component"
+                                v-bind="column.render(rating[column.id as keyof Rating])?.props" />
+                        </template>
+                        <span v-else>
+                            {{ rating[column.id as keyof Rating] }}
+                        </span>
                     </td>
                 </tr>
             </tbody>
@@ -46,25 +56,39 @@
 import { ArrowUp, ArrowDown } from "lucide-vue-next";
 import Button from '@/components/Button.vue';
 import SelectDropdown from '@/components/SelectDropdown.vue';
+import CPIBadge from '@/features/app/components/CPIBadge.vue';
 import { useRatingStore } from '@/store/ratingStore';
 import type { Rating } from '@/types/rating';
-import { formatNumberToCurrency, formatStringToDate } from '@/utils/formater';
+import { formatNumberToCurrency, formatStringToDate, formatActionString, formatNumberToPercentage } from '@/utils/formater';
 import { storeToRefs } from 'pinia';
-import { computed, onMounted } from 'vue';
+import { computed, h, onMounted } from 'vue';
 
 const ratingStore = useRatingStore();
 const { ratings, totalRatings, page, limit, sortBy, sortOrder } = storeToRefs(ratingStore);
 
-const columns: { id: keyof Rating; label: string; type: "string" | "currency" | "date" }[] = [
-    { id: "company", label: "Company", type: "string" },
-    { id: "ticker", label: "Ticker", type: "string" },
-    { id: "action", label: "Action", type: "string" },
-    { id: "target_from", label: "Target From", type: "currency" },
-    { id: "target_to", label: "Target To", type: "currency" },
-    { id: "rating_from", label: "From", type: "string" },
-    { id: "rating_to", label: "To", type: "string" },
-    { id: "rated_at", label: "Rated At", type: "date" }
-];
+const columns: {
+    id: keyof Rating;
+    label: string;
+    render?: (value: Rating[keyof Rating]) => { text?: string; component?: any; props?: Record<string, any> };
+}[] = [
+        { id: "ticker", label: "Ticker" },
+        { id: "company", label: "Company" },
+        { id: "action", label: "Action", render: (value) => ({ text: formatActionString(value as string) }) },
+        { id: "target_from", label: "Target From", render: (value) => ({ text: formatNumberToCurrency(value as number) }) },
+        { id: "target_to", label: "Target To", render: (value) => ({ text: formatNumberToCurrency(value as number) }) },
+        { id: "rating_increase_percentage", label: "Target Increase", render: (value) => ({ text: formatNumberToPercentage(value as number) }) },
+        { id: "rating_to", label: "Current Rating" },
+        {
+            id: "combined_prediction_index",
+            label: "CPI",
+            render: (value) => ({
+                component: CPIBadge,
+                props: { value: value as number }
+            })
+        },
+        { id: "rated_at", label: "Rated At", render: (value) => ({ text: formatStringToDate(value as string) }) }
+    ];
+
 
 const limitOptions = [
     { value: "10", label: "Show 10" },
@@ -92,21 +116,5 @@ const sortByColumn = (column: keyof Rating) => {
     const order = sortBy.value === column && sortOrder.value === "asc" ? "desc" : "asc";
     ratingStore.setSorting(column, order);
 }
-
-const updateLimit = (event: Event) => {
-    const newLimit = Number((event.target as HTMLSelectElement).value);
-    ratingStore.setLimit(newLimit);
-
-}
-
-const formatValue = (value: string | number, type: "string" | "currency" | "date"): string => {
-    if (type === "currency" && typeof value === "number") {
-        return formatNumberToCurrency(value);
-    }
-    if (type === "date" && typeof value === "string") {
-        return formatStringToDate(value);
-    }
-    return value.toString();
-};
 
 </script>

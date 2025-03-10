@@ -35,16 +35,18 @@ func (controller *AnalystRatingController) GetRatings(context *gin.Context) {
 	var ratingDTOs []*dtos.AnalystRatingDTO
 	for _, rating := range ratings {
 		ratingDTOs = append(ratingDTOs, &dtos.AnalystRatingDTO{
-			ID:         rating.ID,
-			Ticker:     rating.Ticker,
-			TargetFrom: rating.TargetFrom,
-			TargetTo:   rating.TargetTo,
-			Company:    rating.Company,
-			Action:     rating.Action,
-			Brokerage:  rating.Brokerage,
-			RatingFrom: rating.RatingFrom,
-			RatingTo:   rating.RatingTo,
-			RatedAt:    rating.RatedAt,
+			ID:                       rating.ID,
+			Ticker:                   rating.Ticker,
+			TargetFrom:               rating.TargetFrom,
+			TargetTo:                 rating.TargetTo,
+			Company:                  rating.Company,
+			Action:                   rating.Action,
+			Brokerage:                rating.Brokerage,
+			RatingFrom:               rating.RatingFrom,
+			RatingTo:                 rating.RatingTo,
+			RatedAt:                  rating.RatedAt,
+			RatingIncreasePercentage: (rating.TargetTo - rating.TargetFrom) / rating.TargetFrom * 100,
+			CombinedPredictionIndex:  rating.CombinedPredictionIndex,
 		})
 	}
 
@@ -110,5 +112,20 @@ func (controller *AnalystRatingController) GetRecommendations(context *gin.Conte
 
 	context.JSON(http.StatusOK, gin.H{
 		"recommendations": recommendations,
+	})
+}
+
+func (controller *AnalystRatingController) GetRatingsIndicators(context *gin.Context) {
+	sourceID := context.Query("source_id")
+	indicators, err := controller.RatingService.GetIndicators(sourceID)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Failed to get indicators",
+		})
+		return
+	}
+
+	context.JSON(http.StatusOK, gin.H{
+		"indicators": indicators,
 	})
 }

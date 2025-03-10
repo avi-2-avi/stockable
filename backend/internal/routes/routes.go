@@ -25,11 +25,26 @@ func SetupRouter() *gin.Engine {
 func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 	router.Use(CORSMiddleware())
 
+	authRepo := repositories.NewAuthRepository(db)
+	authService := services.NewAuthService(authRepo)
+	authController := controllers.NewAuthController(authService)
+
+	router.POST("/auth/register", authController.Register)
+	router.POST("/auth/login", authController.Login)
+	router.POST("/auth/logout", authController.Logout)
+
+	sourceRepo := repositories.NewDataSourceRepository(db)
+	sourceService := services.NewDataSourceService(sourceRepo)
+	sourceController := controllers.NewDataSourceController(sourceService)
+
+	router.GET("/sources", sourceController.GetSources)
+
 	ratingRepo := repositories.NewAnalystRatingsRepository(db)
 	ratingService := services.NewAnalystRatingsService(ratingRepo)
 	ratingController := controllers.NewAnalystRatingController(ratingService)
 
 	router.GET("/ratings", ratingController.GetRatings)
+	router.GET("/ratings/indicators", ratingController.GetRatingsIndicators)
 }
 
 func CORSMiddleware() gin.HandlerFunc {
@@ -40,7 +55,7 @@ func CORSMiddleware() gin.HandlerFunc {
 
 	allowedOrigin := config.AllowedOrigin
 	if allowedOrigin == "" {
-		allowedOrigin = "http://localhost:3000"
+		allowedOrigin = "http://localhost:5173"
 	}
 
 	return func(context *gin.Context) {

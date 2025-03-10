@@ -32,7 +32,8 @@ func main() {
 	adapterName := flag.String("name", "", "Specify adapter name to run individually")
 	flag.Parse()
 
-	adapterManager := manager.NewAdapterManager(db, config)
+	adapterFactory := manager.NewAdapterFactory(config, db)
+	adapterManager := manager.NewAdapterManager(adapterFactory, db)
 	err = adapterManager.RunAdapters(*adapterName)
 	if err != nil {
 		fmt.Println("Error running adapters:", err)

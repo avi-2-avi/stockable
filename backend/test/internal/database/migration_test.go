@@ -18,15 +18,17 @@ func TestMigrations(t *testing.T) {
 	migrationErr := database.Migrate(db)
 	hasAnalystRatings := db.Migrator().HasTable(&models.AnalystRating{})
 	hasDataSource := db.Migrator().HasTable(&models.DataSource{})
-	hasLogRepository := db.Migrator().HasTable(&models.AdapterLog{})
+	hasAdapterLog := db.Migrator().HasTable(&models.AdapterLog{})
+	hasUser := db.Migrator().HasTable(&models.User{})
 
 	assert.NoError(t, dbErr, "Database connection should not return an error")
 	assert.NotNil(t, db, "Database connection should not be nil")
 	assert.NoError(t, migrationErr, "Database migration should not return an error")
 	assert.True(t, hasAnalystRatings, "rating_history table should exist")
 	assert.True(t, hasDataSource, "data_source table should exist")
-	assert.True(t, hasLogRepository, "log_repository table should exist")
+	assert.True(t, hasAdapterLog, "adapter_log table should exist")
+	assert.True(t, hasUser, "user table should exist")
 
-	db.Migrator().DropTable(&models.AnalystRating{}, &models.DataSource{}, &models.AdapterLog{})
+	db.Migrator().DropTable(&models.AnalystRating{}, &models.DataSource{}, &models.AdapterLog{}, &models.User{})
 	os.Unsetenv("DATABASE_URL")
 }

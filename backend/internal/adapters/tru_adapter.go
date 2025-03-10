@@ -8,16 +8,18 @@ import (
 	"fmt"
 	"net/http"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type TruAdapter struct {
 	apiURL       string
 	token        string
 	service      services.AnalystRatingsService
-	dataSourceID uint
+	dataSourceID uuid.UUID
 }
 
-func NewTruAdapter(apiURL string, token string, service services.AnalystRatingsService, dataSourceID uint) RatingAdapter {
+func NewTruAdapter(apiURL string, token string, service services.AnalystRatingsService, dataSourceID uuid.UUID) RatingAdapter {
 	return &TruAdapter{
 		apiURL:       apiURL,
 		token:        token,
@@ -31,7 +33,7 @@ func (truAdapter *TruAdapter) FetchData() ([]models.AnalystRating, error) {
 	nextPage := ""
 
 	// Temporal counter
-	count := 0
+	// count := 0
 
 	for {
 		url := truAdapter.buildUrl(nextPage)
@@ -56,10 +58,10 @@ func (truAdapter *TruAdapter) FetchData() ([]models.AnalystRating, error) {
 
 		// Testing if the loop is working
 
-		count++
-		if count > 10 {
-			break
-		}
+		// count++
+		// if count > 10 {
+		// 	break
+		// }
 	}
 
 	err := truAdapter.service.SaveAnalystRatingsBatch(allRatings)
@@ -107,18 +109,29 @@ func (truAdapter *TruAdapter) parseResponse(httpResponse *http.Response) ([]mode
 	var ratings []models.AnalystRating
 	for _, item := range response.Items {
 		parsedTime, _ := time.Parse(time.RFC3339, item.Time)
-		ratings = append(ratings, models.AnalystRating{
-			Ticker:       item.Ticker,
-			TargetFrom:   utils.ParsePrice(item.TargetFrom),
-			TargetTo:     utils.ParsePrice(item.TargetTo),
-			Company:      item.Company,
-			Action:       item.Action,
-			Brokerage:    item.Brokerage,
-			RatingFrom:   item.RatingFrom,
-			RatingTo:     item.RatingTo,
-			RatedAt:      parsedTime,
-			DataSourceID: truAdapter.dataSourceID,
-		})
+
+		targetFrom := utils.ParsePrice(item.TargetFrom)
+		targetTo := utils.ParsePrice(item.TargetTo)
+
+		rating := models.AnalystRating{
+			Ticker:                     item.Ticker,
+			TargetFrom:                 targetFrom,
+			TargetTo:                   targetTo,
+			Company:                    item.Company,
+			Action:                     item.Action,
+			Brokerage:                  item.Brokerage,
+			RatingFrom:                 item.RatingFrom,
+			RatingTo:                   item.RatingTo,
+			RatedAt:                    parsedTime,
+			DataSourceID:               truAdapter.dataSourceID,
+			ActionImpactScore:          utils.CalculateActionImpactScore(item.Action),
+			RatingChangeImpact:         utils.CalculateRatingChangeImpact(item.RatingFrom, item.RatingTo),
+			TargetAdjustmentPercentage: utils.CalculateTargetAdjustment(targetFrom, targetTo),
+		}
+
+		rating.CombinedPredictionIndex = utils.CalculateRawCPI(rating.ActionImpactScore, rating.RatingChangeImpact, rating.TargetAdjustmentPercentage)
+
+		ratings = append(ratings, rating)
 	}
 
 	return ratings, response.NextPage, nil

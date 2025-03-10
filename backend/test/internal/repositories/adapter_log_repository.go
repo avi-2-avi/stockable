@@ -31,6 +31,6 @@ func TestAdapterLogRepository(t *testing.T) {
 	assert.NoError(t, adapterLogRepoErr, "Should create data source without error")
 
 	adapterLogRepo.Delete(adapterLog.ID)
-	db.Migrator().DropTable(&models.AnalystRating{}, &models.DataSource{}, &models.AdapterLog{})
+	db.Migrator().DropTable(&models.AnalystRating{}, &models.DataSource{}, &models.AdapterLog{}, &models.User{})
 	os.Unsetenv("DATABASE_URL")
 }

@@ -19,7 +19,7 @@ import RatingTable from '@/features/app/components/RatingTable.vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { ChartNoAxesCombined, CircleDollarSign, TrendingUp } from 'lucide-vue-next';
 import { useIndicatorStore } from '@/store/indicatorStore';
-import { formatNumberToPercentage } from '@/utils/formater';
+import { formatNumberToPercentage, formatNumberToCurrency } from '@/utils/formater';
 
 const showModal = ref(false);
 
@@ -44,7 +44,7 @@ const indicatorInformation = computed(() => [
   {
     title: "Highest Rating Increment",
     value: indicatorStore.indicators
-      ? `$${indicatorStore.indicators.highest_increment_in_target_price}`
+      ? `${formatNumberToCurrency(indicatorStore.indicators.highest_increment_in_target_price)}`
       : "Loading...",
     description: indicatorStore.indicators
       ? `Highest $ increase stock: ${indicatorStore.indicators.highest_increment_in_target_price_name} (${indicatorStore.indicators.highest_increment_in_target_price_ticker})`

@@ -34,7 +34,13 @@ func (r *DataSourceRepository) GetByID(id uuid.UUID) (*models.DataSource, error)
 func (r *DataSourceRepository) GetByName(name string) (*models.DataSource, error) {
 	var dataSource models.DataSource
 	err := r.db.Where("name = ?", name).First(&dataSource).Error
-	return &dataSource, err
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &dataSource, nil
 }
 
 func (r *DataSourceRepository) Delete(id uuid.UUID) error {

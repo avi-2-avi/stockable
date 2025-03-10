@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import type { Option } from '@/types/option.ts'
 import { defineStore } from 'pinia'
 import axios from 'axios'
@@ -32,10 +32,6 @@ export const useSourceStore = defineStore('source', () => {
           sources.value.find((source) => source.label === 'TruAdapter')?.value ||
           sources.value[0].value
       }
-
-      if (selectedSource.value) {
-        await indicatorStore.fetchIndicators(selectedSource.value)
-      }
     } catch (error) {
       console.error('Error fetching sources', error)
     }
@@ -45,6 +41,12 @@ export const useSourceStore = defineStore('source', () => {
     selectedSource.value = source_id
     indicatorStore.fetchIndicators(source_id)
   }
+
+  watch(selectedSource, async (newSource) => {
+    if (newSource) {
+      await indicatorStore.fetchIndicators(newSource)
+    }
+  })
 
   return { sources, selectedSource, fetchSources, setSelectedSource }
 })

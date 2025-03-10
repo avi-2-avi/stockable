@@ -48,6 +48,6 @@ func TestAnalystRatingsRepository(t *testing.T) {
 	assert.Equal(t, dataSource.ID, fetchedRating.DataSourceID, "Should have correct foreign key")
 
 	dataSourceRepo.Delete(dataSource.ID)
-	db.Migrator().DropTable(&models.AnalystRating{}, &models.DataSource{}, &models.AdapterLog{})
+	db.Migrator().DropTable(&models.AnalystRating{}, &models.DataSource{}, &models.AdapterLog{}, &models.User{})
 	os.Unsetenv("DATABASE_URL")
 }

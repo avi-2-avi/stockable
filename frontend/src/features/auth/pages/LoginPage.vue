@@ -17,7 +17,13 @@
                     <BaseInput label="Password" type="password" placeholder="••••••••" v-model="form.password"
                         :errorMessage="errors.password" />
 
-                    <Button :label="isSignup ? 'Sign Up' : 'Login'" size="lg" variant="solid" class="w-full" />
+                        <Button 
+                        :label="isLoading ? 'Processing...' : (isSignup ? 'Sign Up' : 'Login')" 
+                        size="lg" 
+                        variant="solid" 
+                        class="w-full" 
+                        :disabled="isLoading"
+                    />
 
                     <p class="text-sm">
                         {{ isSignup ? "Already have an account?" : "Don't have an account?" }}
@@ -44,6 +50,7 @@ import { useAuthStore } from '@/store/authStore';
 
 const authStore = useAuthStore()
 const isSignup = ref(false);
+const isLoading = ref(false); 
 const form = ref({
     fullName: "",
     email: "",
@@ -62,6 +69,7 @@ const handleSubmit = async () => {
     errors.value = validateAuthForm(form.value, isSignup.value);
     if (Object.keys(errors.value).length > 0) return;
 
+    isLoading.value = true; 
     try {
         if (isSignup.value) {
             await authStore.register(form.value.fullName, form.value.email, form.value.password);
@@ -71,6 +79,8 @@ const handleSubmit = async () => {
     } catch (error: any) {
         console.error(error);
         authError.value = error?.message || "An unexpected error occurred. Please try again.";
+    } finally {
+        isLoading.value = false; 
     }
 };
 </script>

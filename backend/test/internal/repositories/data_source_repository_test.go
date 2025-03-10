@@ -31,6 +31,6 @@ func TestDataSourceRepository(t *testing.T) {
 	assert.Equal(t, "API-TEST", fetchedSource.Name, "Fetched data source should match")
 
 	dataSourceRepo.Delete(dataSource.ID)
-	db.Migrator().DropTable(&models.AnalystRating{}, &models.DataSource{}, &models.AdapterLog{})
+	db.Migrator().DropTable(&models.AnalystRating{}, &models.DataSource{}, &models.AdapterLog{}, &models.User{})
 	os.Unsetenv("DATABASE_URL")
 }

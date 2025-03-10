@@ -21,8 +21,8 @@ const routes = [
     path: '/app/home',
   },
   {
-    name: 'Recommendations',
-    path: '/app/recommendation',
+    name: 'History',
+    path: '/app/history',
   }
 ]
 

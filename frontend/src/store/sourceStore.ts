@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import type { Option } from '@/types/option.ts'
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { useIndicatorStore } from './indicatorStore'
 
 interface SourceResponse {
   id: string
@@ -11,6 +12,7 @@ interface SourceResponse {
 export const useSourceStore = defineStore('source', () => {
   const sources = ref<Option[]>([])
   const selectedSource = ref<string>('')
+  const indicatorStore = useIndicatorStore()
 
   const fetchSources = async () => {
     try {
@@ -30,6 +32,10 @@ export const useSourceStore = defineStore('source', () => {
           sources.value.find((source) => source.label === 'TruAdapter')?.value ||
           sources.value[0].value
       }
+
+      if (selectedSource.value) {
+        await indicatorStore.fetchIndicators(selectedSource.value)
+      }
     } catch (error) {
       console.error('Error fetching sources', error)
     }
@@ -37,6 +43,7 @@ export const useSourceStore = defineStore('source', () => {
 
   const setSelectedSource = (source_id: string) => {
     selectedSource.value = source_id
+    indicatorStore.fetchIndicators(source_id)
   }
 
   return { sources, selectedSource, fetchSources, setSelectedSource }

@@ -1,7 +1,5 @@
 package utils
 
-import "math"
-
 func CalculateActionImpactScore(action string) float64 {
 	switch action {
 	case "reiterated by":
@@ -86,9 +84,6 @@ func CalculateTargetAdjustment(from float64, to float64) float64 {
 	return tap
 }
 
-func CalculateCPI(ais float64, rci float64, tap float64) float64 {
-	rawCPI := (0.3 * ais) + (0.35 * rci) + (0.35 * tap)
-	normalizedCPI := ((rawCPI - (-54.5)) / (37 - (-54.5))) * 100
-
-	return math.Round(normalizedCPI*100) / 100
+func CalculateRawCPI(actionImpact float64, ratingChangeImpact float64, targetAdjustmentPercentage float64) float64 {
+	return 0.3*actionImpact + 0.35*ratingChangeImpact + 0.35*targetAdjustmentPercentage
 }

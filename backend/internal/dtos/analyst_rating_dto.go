@@ -26,4 +26,5 @@ type AnalystRatingIndicatorsDTO struct {
 	PositiveTargetAdjustmentPercentage  float64 `json:"positive_target_adjustment_percentage"`
 	HighestIncrementInTargetPrice       float64 `json:"highest_increment_in_target_price"`
 	HighestIncrementInTargetPriceTicker string  `json:"highest_increment_in_target_price_ticker"`
+	HighestIncrementInTargetPriceName   string  `json:"highest_increment_in_target_price_name"`
 }

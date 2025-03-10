@@ -1,7 +1,7 @@
 <template>
   <div class="h-screen flex flex-col items-center">
     <AppNavbar />
-    <div class="flex flex-col mx-auto pt-20 flex-1 container w-full space-y-1 px-4">
+    <div class="flex flex-col mx-auto pt-22 flex-1 container w-full space-y-4 px-4">
       <Card card-class="flex items-center space-x-4">
         <p class="font-medium">Select data source:</p>
         <SelectDropdown id="source-select" label="Select a data source" v-model="selectedSource" :options="sources"

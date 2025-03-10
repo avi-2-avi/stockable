@@ -5,38 +5,40 @@ import HomePage from '../features/app/home/pages/HomePage.vue'
 import HistoryPage from '../features/app/history/pages/HistoryPage.vue'
 import { useAuthStore } from '@/store/authStore'
 
+export const routes = [
+  {
+    path: '/',
+    name: 'Landing',
+    component: LandingPage,
+    meta: { requiresAuth: false },
+  },
+  {
+    path: '/auth',
+    name: 'Auth',
+    component: LoginPage,
+    meta: { requiresAuth: false },
+  },
+  {
+    path: '/app/home',
+    name: 'Home',
+    component: HomePage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/app/history',
+    name: 'History',
+    component: HistoryPage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/',
+  },
+]
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      name: 'Landing',
-      component: LandingPage,
-      meta: { requiresAuth: false },
-    },
-    {
-      path: '/auth',
-      name: 'Auth',
-      component: LoginPage,
-      meta: { requiresAuth: false },
-    },
-    {
-      path: '/app/home',
-      name: 'Home',
-      component: HomePage,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: '/app/history',
-      name: 'History',
-      component: HistoryPage,
-      meta: { requiresAuth: true },
-    },
-    {
-      path: '/:pathMatch(.*)*',
-      redirect: '/',
-    },
-  ],
+  routes,
 })
 
 router.beforeEach((to, _, next) => {

@@ -1,5 +1,5 @@
 <template>
-    <div class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div class="fixed inset-0 flex items-center justify-center bg-black/80 z-[100]">
         <div class="bg-white rounded-lg shadow-lg p-6 w-[400px]">
             <header class="flex justify-between items-center mb-4">
                 <slot name="header"></slot>

@@ -138,13 +138,18 @@ func (controller *AnalystRatingController) GetRatingsIndicators(context *gin.Con
 	sourceID := context.Query("source_id")
 	indicators, err := controller.RatingService.GetIndicators(sourceID)
 	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Failed to get indicators",
+		utils.Respond(context, utils.APIResponse{
+			Status:  http.StatusInternalServerError,
+			Message: "Failed to get indicators",
 		})
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{
-		"indicators": indicators,
+	utils.Respond(context, utils.APIResponse{
+		Status:  http.StatusOK,
+		Message: "Success",
+		Body: gin.H{
+			"indicators": indicators,
+		},
 	})
 }

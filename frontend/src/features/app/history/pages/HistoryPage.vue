@@ -1,5 +1,5 @@
 <template>
-    <AppLayout pageTitle="Recommendations">
+    <AppLayout pageTitle="History">
     </AppLayout>
 </template>
 

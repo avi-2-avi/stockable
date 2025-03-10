@@ -1,6 +1,6 @@
 <template>
   <BaseNavbar>
-    <div class="flex items-center justify-between">
+    <div class="flex items-center justify-between space-x-2.5">
       <router-link :to="route.path" v-for="route in routes" :key="route.path"
         class="px-4 py-2 text-sm font-semibold text-foreground hover:text-stock-400/70 hidden sm:block"
         :class="{ 'text-stock-400': $route.path === route.path }">
@@ -23,10 +23,10 @@ const routes = [
     name: 'Home',
     path: '/app/home',
   },
-  {
-    name: 'History',
-    path: '/app/history',
-  }
+  // {
+  //   name: 'History',
+  //   path: '/app/history',
+  // }
 ]
 
 const logOut = async () => {

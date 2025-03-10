@@ -1,7 +1,10 @@
 <template>
   <div :class="['relative', customClass]">
+    <label v-if="label" class="block text-left text-sm font-medium mb-1">
+      {{ label }}
+    </label>
     <div
-      :class="['p-1.5 text-sm border border-border rounded-md bg-card dark:text-white flex justify-between items-center cursor-pointer', dropdownClass]"
+      :class="['px-2 py-2 text-sm border border-border rounded-md bg-card dark:text-white flex justify-between items-center cursor-pointer', dropdownClass]"
       @click="toggleDropdown">
       {{ selectedLabel }}
       <ChevronDown class="w-4 h-4 text-foreground" />
@@ -50,7 +53,11 @@ const props = defineProps({
   position: {
     type: String as () => "top" | "bottom",
     default: "bottom",
-  }
+  },
+  label: {
+    type: String,
+    optional: true,
+  },
 })
 
 const emit = defineEmits<{

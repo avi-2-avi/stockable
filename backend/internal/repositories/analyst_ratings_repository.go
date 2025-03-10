@@ -135,6 +135,7 @@ func (r *AnalystRatingsRepository) GetIndicators(sourceID string) (dtos.AnalystR
 
 	dto.HighestIncrementInTargetPrice = highestIncrementRating.TargetTo - highestIncrementRating.TargetFrom
 	dto.HighestIncrementInTargetPriceTicker = highestIncrementRating.Ticker
+	dto.HighestIncrementInTargetPriceName = highestIncrementRating.Company
 
 	return dto, nil
 }
@@ -150,15 +151,29 @@ func (r *AnalystRatingsRepository) getTotalRatingsCount(sourceID string) (int64,
 }
 
 func (r *AnalystRatingsRepository) getBuyNowPercentage(sourceID string, totalCount int64) (float64, error) {
-	var buyNowCount int64
-	query := r.db.Model(&models.AnalystRating{}).Where("combined_prediction_index > ?", 70)
-	if sourceID != "" {
-		query = query.Where("data_source_id = ?", sourceID)
-	}
-	err := query.Count(&buyNowCount).Error
+	minCPI, maxCPI, err := r.GetMinMaxCPI()
 	if err != nil {
 		return 0, err
 	}
+
+	if minCPI == maxCPI {
+		return 0, nil
+	}
+
+	var buyNowCount int64
+	query := r.db.Model(&models.AnalystRating{}).
+		Where("(CAST(combined_prediction_index AS NUMERIC) - CAST(? AS NUMERIC)) / (CAST(? AS NUMERIC) - CAST(? AS NUMERIC)) * 100 > ?",
+			minCPI, maxCPI, minCPI, 70)
+
+	if sourceID != "" {
+		query = query.Where("data_source_id = ?", sourceID)
+	}
+
+	err = query.Count(&buyNowCount).Error
+	if err != nil {
+		return 0, err
+	}
+
 	return float64(buyNowCount) / float64(totalCount) * 100, nil
 }
 
@@ -193,6 +208,21 @@ func (r *AnalystRatingsRepository) getHighestIncrementInTargetPrice(sourceID str
 	}
 
 	return rating, nil
+}
+func (r *AnalystRatingsRepository) GetMinMaxCPI() (float64, float64, error) {
+	var result struct {
+		Min float64 `gorm:"column:min"`
+		Max float64 `gorm:"column:max"`
+	}
+
+	err := r.db.Raw("SELECT MIN(combined_prediction_index) as min, MAX(combined_prediction_index) as max FROM analyst_ratings").
+		Scan(&result).Error
+
+	if err != nil {
+		return 0, 0, err
+	}
+
+	return result.Min, result.Max, nil
 }
 
 func (r *AnalystRatingsRepository) GetRecommendations() ([]models.AnalystRating, error) {

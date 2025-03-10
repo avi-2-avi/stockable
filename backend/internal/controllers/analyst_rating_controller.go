@@ -32,8 +32,27 @@ func (controller *AnalystRatingController) GetRatings(context *gin.Context) {
 		return
 	}
 
+	minCPI, maxCPI, err := controller.RatingService.GetMinMaxCPI()
+	if err != nil {
+		utils.Respond(context, utils.APIResponse{
+			Status:  http.StatusInternalServerError,
+			Message: "Failed to get CPI normalization data",
+		})
+		return
+	}
+
+	if minCPI == maxCPI {
+		maxCPI += 0.1
+	}
+
+	normalizeCPI := func(rawCPI float64) float64 {
+		return ((rawCPI - minCPI) / (maxCPI - minCPI)) * 100
+	}
+
 	var ratingDTOs []*dtos.AnalystRatingDTO
 	for _, rating := range ratings {
+		normalizedCPI := normalizeCPI(rating.CombinedPredictionIndex)
+
 		ratingDTOs = append(ratingDTOs, &dtos.AnalystRatingDTO{
 			ID:                       rating.ID,
 			Ticker:                   rating.Ticker,
@@ -46,7 +65,7 @@ func (controller *AnalystRatingController) GetRatings(context *gin.Context) {
 			RatingTo:                 rating.RatingTo,
 			RatedAt:                  rating.RatedAt,
 			RatingIncreasePercentage: (rating.TargetTo - rating.TargetFrom) / rating.TargetFrom * 100,
-			CombinedPredictionIndex:  rating.CombinedPredictionIndex,
+			CombinedPredictionIndex:  normalizedCPI,
 		})
 	}
 

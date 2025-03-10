@@ -33,7 +33,7 @@ func (truAdapter *TruAdapter) FetchData() ([]models.AnalystRating, error) {
 	nextPage := ""
 
 	// Temporal counter
-	count := 0
+	// count := 0
 
 	for {
 		url := truAdapter.buildUrl(nextPage)
@@ -58,10 +58,10 @@ func (truAdapter *TruAdapter) FetchData() ([]models.AnalystRating, error) {
 
 		// Testing if the loop is working
 
-		count++
-		if count > 10 {
-			break
-		}
+		// count++
+		// if count > 10 {
+		// 	break
+		// }
 	}
 
 	err := truAdapter.service.SaveAnalystRatingsBatch(allRatings)
@@ -129,7 +129,7 @@ func (truAdapter *TruAdapter) parseResponse(httpResponse *http.Response) ([]mode
 			TargetAdjustmentPercentage: utils.CalculateTargetAdjustment(targetFrom, targetTo),
 		}
 
-		rating.CombinedPredictionIndex = utils.CalculateCPI(rating.ActionImpactScore, rating.RatingChangeImpact, rating.TargetAdjustmentPercentage)
+		rating.CombinedPredictionIndex = utils.CalculateRawCPI(rating.ActionImpactScore, rating.RatingChangeImpact, rating.TargetAdjustmentPercentage)
 
 		ratings = append(ratings, rating)
 	}

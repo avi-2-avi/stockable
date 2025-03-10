@@ -14,6 +14,9 @@
 <script setup lang="ts">
 import Button from '@/components/Button.vue'
 import BaseNavbar from '@/components/BaseNavbar.vue'
+import { useAuthStore } from '@/store/authStore'
+
+const authStore = useAuthStore()
 
 const routes = [
   {
@@ -26,7 +29,7 @@ const routes = [
   }
 ]
 
-const logOut = () => {
-  console.log('Logging out')
+const logOut = async () => {
+  await authStore.logout()
 }
 </script>

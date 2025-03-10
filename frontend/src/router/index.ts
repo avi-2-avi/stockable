@@ -3,6 +3,7 @@ import LandingPage from '../features/landing/pages/LandingPage.vue'
 import LoginPage from '../features/auth/pages/LoginPage.vue'
 import HomePage from '../features/app/home/pages/HomePage.vue'
 import HistoryPage from '../features/app/history/pages/HistoryPage.vue'
+import { useAuthStore } from '@/store/authStore'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,13 +39,13 @@ const router = createRouter({
   ],
 })
 
-// router.beforeEach((to, _, next) => {
-// const authStore = useAuthStore();
-// if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-//   next("/auth");
-// } else {
-//   next();
-// }
-// });
+router.beforeEach((to, _, next) => {
+  const authStore = useAuthStore()
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    next('/auth')
+  } else {
+    next()
+  }
+})
 
 export default router

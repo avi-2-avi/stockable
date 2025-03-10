@@ -25,6 +25,14 @@ func SetupRouter() *gin.Engine {
 func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 	router.Use(CORSMiddleware())
 
+	authRepo := repositories.NewAuthRepository(db)
+	authService := services.NewAuthService(authRepo)
+	authController := controllers.NewAuthController(authService)
+
+	router.POST("/auth/register", authController.Register)
+	router.POST("/auth/login", authController.Login)
+	router.POST("/auth/logout", authController.Logout)
+
 	sourceRepo := repositories.NewDataSourceRepository(db)
 	sourceService := services.NewDataSourceService(sourceRepo)
 	sourceController := controllers.NewDataSourceController(sourceService)

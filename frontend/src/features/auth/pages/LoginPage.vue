@@ -38,14 +38,15 @@ import Card from '@/components/Card.vue';
 import Button from '@/components/Button.vue';
 import BaseInput from '@/components/Input.vue';
 import { validateAuthForm } from '@/utils/validation.ts';
+import { useAuthStore } from '@/store/authStore';
 
+const authStore = useAuthStore()
 const isSignup = ref(false);
 const form = ref({
     fullName: "",
     email: "",
     password: ""
 });
-
 const errors = ref<Record<string, string>>({});
 
 const toggleMode = () => {
@@ -53,11 +54,16 @@ const toggleMode = () => {
     errors.value = {}; // Reset errors when switching
 };
 
-const handleSubmit = () => {
+const handleSubmit = async () => {
     errors.value = validateAuthForm(form.value, isSignup.value);
-    if (Object.keys(errors.value).length === 0) {
-        console.log(isSignup.value ? "Signing up:" : "Logging in:", form.value);
-        // Proceed with API request
+    try {
+        if (isSignup.value) {
+            await authStore.register(form.value.fullName, form.value.email, form.value.password)
+        } else {
+            await authStore.login(form.value.email, form.value.password)
+        }
+    } catch (error) {
+        console.error(error)
     }
 };
 </script>

@@ -1,0 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Outfit:wght@100..900&display=swap');
+@import 'tailwindcss';
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme {
+  --color-stock-50: #fff6ed;
+  --color-stock-100: #ffead4;
+  --color-stock-200: #ffd0a8;
+  --color-stock-300: #ffaf71;
+  --color-stock-400: #ff8237;
+  --color-stock-500: #fe6011;
+  --color-stock-600: #ef4607;
+  --color-stock-700: #c63108;
+  --color-stock-800: #9d280f;
+  --color-stock-900: #7e2410;
+  --color-stock-950: #440e06;
+
+  --color-base: #ffffff;
+  --color-card: #ffffff;
+  --color-border: #d4d4d8;
+  --color-foreground: #0e0e11;
+
+  --font-open-sans: 'Open Sans', sans-serif;
+  --font-outfit: 'Outfit', sans-serif;
+}
+
+.dark {
+  --color-base: #0e0e11;
+  --color-card: #18181c;
+  --color-border: #52525b;
+  --color-foreground: #ffffff;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+.headline {
+  color: var(--color-foreground);
+  font-family: 'Outfit', sans-serif;
+  font-size: 4.5rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+h1 {
+  color: var(--color-foreground);
+  font-family: 'Outfit', sans-serif;
+  font-size: 3.5rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+h2 {
+  color: var(--color-foreground);
+  font-family: 'Outfit', sans-serif;
+  font-size: 3rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+h3 {
+  color: var(--color-foreground);
+  font-family: 'Outfit', sans-serif;
+  font-size: 2rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+h4 {
+  color: var(--color-foreground);
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.logo {
+  color: var(--color-foreground);
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+
+body {
+  min-height: 100vh;
+  transition:
+    color 0.5s,
+    background-color 0.5s;
+  line-height: 1.6;
+  font-family:
+    'Open Sans',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    'Fira Sans',
+    'Droid Sans',
+    'Helvetica Neue',
+    sans-serif;
+  font-size: 15px;
+  background: var(--color-base);
+  color: var(--color-foreground);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

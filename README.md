@@ -1,23 +1,21 @@
 <p align="center">
   <a href="" rel="noopener">
- <img width=200px height=200px src="https://i.imgur.com/6wj0hh6.jpg" alt="Project logo"></a>
+    <img width=400px height=100px src="./images/logo.svg" alt="Stockable logo">
+  </a>
 </p>
-
-<h3 align="center">Project Title</h3>
 
 <div align="center">
 
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
-[![GitHub Issues](https://img.shields.io/github/issues/kylelobo/The-Documentation-Compendium.svg)](https://github.com/kylelobo/The-Documentation-Compendium/issues)
-[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/kylelobo/The-Documentation-Compendium.svg)](https://github.com/kylelobo/The-Documentation-Compendium/pulls)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
 
 </div>
 
 ---
 
-<p align="center"> Few lines describing your project.
-    <br> 
+<p align="center">
+  <strong>Stockable</strong> is an investment analytics platform that provides daily stock recommendations based on analyst ratings.
+    <br>
 </p>
 
 ## 📝 Table of Contents
@@ -27,89 +25,128 @@
 - [Deployment](#deployment)
 - [Usage](#usage)
 - [Built Using](#built_using)
-- [TODO](../TODO.md)
-- [Contributing](../CONTRIBUTING.md)
 - [Authors](#authors)
-- [Acknowledgments](#acknowledgement)
 
 ## 🧐 About <a name = "about"></a>
 
-Write about 1-2 paragraphs describing the purpose of your project.
+**Stockable** is a comprehensive investment analytics tool designed to help investors make informed decisions. It aggregates analyst ratings, calculates key indicators, and provides actionable insights into the stock market. The platform includes:
+
+- **Daily stock recommendations** based on market trends.
+- **Visualization tools** for performance metrics.
+- **Customizable filters** for user preferences.
+- **Secure authentication** for user accounts.
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
+These instructions will help you set up the project on your local machine for development and testing.
 
 ### Prerequisites
 
-What things you need to install the software and how to install them.
+Ensure you have the following installed:
 
+- **Go** `1.23.3` or later
+- **pnpm** `9.14.4` or later
+- **CockroachDB** `24.3.6` (for local database testing)
+
+Install CockroachDB locally:
+
+```bash
+# MacOS installation
+brew install cockroachdb/tap/cockroach
 ```
-Give examples
-```
+
+For other platforms, check [CockroachDB Installation Guide](https://www.cockroachlabs.com/docs/v25.1/install-cockroachdb-mac.html).
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/avi-2-avi/stockable.git
+   cd stockable
+   ```
 
-Say what the step will be
+2. **Backend Setup:**
+   - Navigate to the backend directory:
+     ```bash
+     cd backend
+     ```
+   - Copy `.env.local.sample` as `.env` and configure the environments missing.
+   - Run the data loader:
+     ```bash
+     go run cmd/loader/main.go
+     ```
+   - Start the backend server:
+     ```bash
+     go run cmd/server/main.go
+     ```
 
+3. **Frontend Setup:**
+   - Navigate to the frontend directory:
+     ```bash
+     cd frontend
+     ```
+   - Copy `.env.local.sample` as `.env.local` and update API settings.
+   - Install dependencies:
+     ```bash
+     pnpm install
+     ```
+   - Run the development server:
+     ```bash
+     pnpm dev
+     ```
+
+## 🔧 Running the Tests <a name = "tests"></a>
+
+We provide unit tests for both backend and frontend components.
+
+### Backend Tests
+```bash
+cd backend
+# Run all backend tests
+go test -v ./test/...
 ```
-Give the example
-```
 
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo.
-
-## 🔧 Running the tests <a name = "tests"></a>
-
-Explain how to run the automated tests for this system.
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
+### Frontend Tests
+```bash
+cd frontend
+# Run unit tests
+pnpm test:unit
 ```
 
 ## 🎈 Usage <a name="usage"></a>
 
-Add notes about how to use the system.
+### Features
+- **Landing Page**: Overview of the app and stock market insights.
+- **Authentication**: Secure login and registration for users.
+- **Dashboard**: Personalized stock recommendations and analysis.
+- **Filtering & Sorting**: Customize recommendations based on various indicators.
 
 ## 🚀 Deployment <a name = "deployment"></a>
 
-Add additional notes about how to deploy this on a live system.
+Stockable can be deployed to any cloud provider. For **AWS deployment with Terraform** on a single virtual machine, run:
+
+```bash
+terraform init
+terraform apply
+```
+
+For Docker deployment:
+```bash
+docker-compose up --build
+```
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
-- [MongoDB](https://www.mongodb.com/) - Database
-- [Express](https://expressjs.com/) - Server Framework
-
-- [VueJs](https://vuejs.org/) - Web Framework
-- [NodeJs](https://nodejs.org/en/) - Server Environment
+- [CockroachDB](https://www.cockroachlabs.com/) - Database
+- [Vue.js](https://vuejs.org/) - Frontend Framework
+- [Go](https://go.dev/) - Backend Language
+- [Gin](https://gin-gonic.com/) - Web Framework for Go
+- [Pinia](https://pinia.vuejs.org/) - State Management
 
 ## ✍️ Authors <a name = "authors"></a>
 
-- [@avi-2-avi](https://github.com/avi-2-avi) - Idea & Initial work
+- [@avi-2-avi](https://github.com/avi-2-avi) - Cristina Vidal
 
-See also the list of [contributors](https://github.com/kylelobo/The-Documentation-Compendium/contributors) who participated in this project.
+## 📜 License
 
-## 🎉 Acknowledgements <a name = "acknowledgement"></a>
-
-- Hat tip to anyone whose code was used
-- Inspiration
-- References
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

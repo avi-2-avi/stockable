@@ -123,13 +123,6 @@ pnpm test:unit
 
 ## 🚀 Deployment <a name = "deployment"></a>
 
-Stockable can be deployed to any cloud provider. For **AWS deployment with Terraform** on a single virtual machine, run:
-
-```bash
-terraform init
-terraform apply
-```
-
 For Docker deployment:
 ```bash
 docker-compose up --build

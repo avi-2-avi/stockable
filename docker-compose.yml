@@ -1,0 +1,25 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: stockable-backend
+    ports:
+      - "8085:8085"
+    env_file:
+      - ./backend/.env
+    command: [ "./server" ]
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: "http://stockable-backend:8085"
+    container_name: stockable-frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+    env_file:
+      - ./frontend/.env.local

@@ -53,14 +53,14 @@
             </tbody>
         </table>
         <div class="mt-4 flex justify-between items-center">
-            <Button label="Previous" size="md" variant="subtle" @click="prevPage" :disabled="page <= 1" />
+            <Button label="Previous" size="md" @click="prevPage" :disabled="page <= 1" />
             <div class="flex items-center space-x-4">
                 <span>Page {{ page }} of {{ totalPages }}</span>
 
                 <SelectDropdown id="limit-select" v-model="selectedLimit" :options="limitOptions" customClass="w-40" />
             </div>
 
-            <Button label="Next" size="md" variant="subtle" @click="nextPage"
+            <Button label="Next" size="md" @click="nextPage"
                 :disabled="page * limit >= totalRatings" />
         </div>
     </div>

@@ -12,6 +12,8 @@ export const useIndicatorStore = defineStore('indicator', () => {
     highest_increment_in_target_price_ticker: ''
   })
 
+  const cachedIndicators = reactive<IndicatorData>({ ...indicators })
+
   const fetchIndicators = async (sourceId: string) => {
     try {
       Object.assign(indicators, {
@@ -30,11 +32,16 @@ export const useIndicatorStore = defineStore('indicator', () => {
         throw new Error('Failed to fetch indicators')
       }
 
-      Object.assign(indicators, response.data.body.indicators)
+      const newIndicators = response.data.body.indicators
+
+      if(JSON.stringify(newIndicators) !== JSON.stringify(indicators)) {
+        Object.assign(indicators, response.data.body.indicators)
+        Object.assign(cachedIndicators, response.data.body.indicators)
+      }
     } catch (error) {
       console.error('Error fetching indicators', error)
     }
   }
 
-  return { indicators, fetchIndicators }
+  return { indicators, cachedIndicators, fetchIndicators }
 })

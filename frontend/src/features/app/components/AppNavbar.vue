@@ -2,8 +2,8 @@
   <BaseNavbar>
     <div class="flex items-center justify-between space-x-2.5">
       <router-link :to="route.path" v-for="route in routes" :key="route.path"
-        class="px-4 py-2 text-sm font-semibold text-foreground hover:text-stock-400/70 hidden sm:block"
-        :class="{ 'text-stock-400': $route.path === route.path }">
+        class="px-4 py-2 text-sm text-foreground hover:text-stock-500 hidden sm:block"
+        :class="{ 'font-bold': $route.path === route.path }">
         {{ route.name }}
       </router-link>
       <Button label="Log out" size="md" variant="solid" @click="logOut" />

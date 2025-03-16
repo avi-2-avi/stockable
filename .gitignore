@@ -60,6 +60,3 @@ tfplan
 
 # Pem files
 *.pem
-
-
-*.env.local.sample

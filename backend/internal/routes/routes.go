@@ -53,15 +53,20 @@ func CORSMiddleware() gin.HandlerFunc {
 		fmt.Println("Failed to load configuration")
 	}
 
-	allowedOrigin := config.AllowedOrigin
-	if allowedOrigin == "" {
-		allowedOrigin = "http://localhost:5173"
+	allowedOrigins := map[string]bool{
+		"http://localhost:5173":        true,
+		"http://stockable-frontend":    true,
+		"http://stockable-frontend:80": true,
+	}
+
+	if config.AllowedOrigin != "" {
+		allowedOrigins[config.AllowedOrigin] = true
 	}
 
 	return func(context *gin.Context) {
 		origin := context.Request.Header.Get("Origin")
 
-		if origin == allowedOrigin {
+		if allowedOrigins[origin] {
 			context.Writer.Header().Set("Access-Control-Allow-Origin", origin)
 			context.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		}

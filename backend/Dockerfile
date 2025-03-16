@@ -3,8 +3,6 @@ FROM golang:1.23.3 AS build-stage
 WORKDIR /app
 COPY . .
 
-RUN go mod tidy
-
 ARG ENV_FILE=.env
 COPY ${ENV_FILE} .env
 

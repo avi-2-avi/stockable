@@ -23,4 +23,4 @@ sudo -u ec2-user git checkout feat/deploy-v2
 aws s3 cp s3://stockable-env-files/backend.env /home/ec2-user/stockable/backend/.env
 aws s3 cp s3://stockable-env-files/frontend.env.local /home/ec2-user/stockable/frontend/.env.local
 
-docker-compose up -d
+# docker-compose up -d

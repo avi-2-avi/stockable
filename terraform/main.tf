@@ -9,13 +9,6 @@ resource "aws_s3_object" "backend_env" {
   acl    = "private"
 }
 
-resource "aws_s3_object" "frontend_env_local" {
-  bucket = aws_s3_bucket.stockable_env_bucket.id
-  key    = "frontend.env.local"
-  source = "${path.module}/../frontend/.env.local"
-  acl    = "private"
-}
-
 resource "aws_iam_role" "stockable_ec2_role" {
   name = "stockable-ec2-role"
 
@@ -41,7 +34,18 @@ resource "aws_iam_policy" "s3_access_policy" {
       Effect   = "Allow"
       Action   = ["s3:GetObject"]
       Resource = "arn:aws:s3:::stockable-env-files/*"
-    }]
+      },
+      {
+        Effect = "Allow"
+        Action = [
+          "ec2:DescribeInstances",
+          "ec2:DescribeSecurityGroups",
+          "ec2:AuthorizeSecurityGroupIngress",
+          "ec2:RevokeSecurityGroupIngress"
+        ],
+        Resource = "*"
+      }
+    ]
   })
 }
 
@@ -73,13 +77,6 @@ resource "aws_security_group" "stockable_sg" {
     cidr_blocks = ["0.0.0.0/0"] # HTTPS
   }
 
-  ingress {
-    from_port   = 8085
-    to_port     = 8085
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Stockable API
-  }
-
   dynamic "ingress" {
     for_each = length(regexall("^\\d+\\.\\d+\\.\\d+\\.\\d+$", var.ssh_admin_ip)) > 0 ? [1] : []
     content {
@@ -107,6 +104,11 @@ resource "aws_instance" "stockable_ec2" {
   iam_instance_profile = aws_iam_instance_profile.stockable_ec2_profile.name
 
   user_data = file("${path.module}/user_data.sh")
+
+  metadata_options {
+    http_tokens   = "optional"  # Allow IMDSv1 (no token required)
+    http_endpoint = "enabled"
+  }
 
   tags = {
     Name = "StockableApp"

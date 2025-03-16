@@ -16,7 +16,7 @@ export const useSourceStore = defineStore('source', () => {
 
   const fetchSources = async () => {
     try {
-      const response = await axios.get(import.meta.env.VITE_API_URL + '/sources')
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/sources`)
 
       if (response.status !== 200) {
         throw new Error('Failed to fetch sources')

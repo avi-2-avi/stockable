@@ -14,8 +14,12 @@ ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 mkdir -p /home/ec2-user/stockable
 chown ec2-user:ec2-user /home/ec2-user/stockable
 
-git clone https://github.com/avi-2-avi/stockable.git /home/ec2-user/stockable
+sudo -u ec2-user git clone https://github.com/avi-2-avi/stockable.git /home/ec2-user/stockable
+
+chown -R ec2-user:ec2-user /home/ec2-user/stockable
+
 cd /home/ec2-user/stockable
+sudo -u ec2-user git checkout feat/deploy-v2
 
 aws s3 cp s3://stockable-env-files/backend.env /home/ec2-user/stockable/backend/.env
 aws s3 cp s3://stockable-env-files/frontend.env.local /home/ec2-user/stockable/frontend/.env.local

@@ -1,5 +1,10 @@
+networks:
+  stockable-network:
+
 services:
   backend:
+    networks:
+      - stockable-network
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -11,6 +16,8 @@ services:
     command: [ "./server" ]
 
   frontend:
+    networks:
+      - stockable-network
     build:
       context: ./frontend
       dockerfile: Dockerfile

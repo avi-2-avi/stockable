@@ -15,7 +15,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        VITE_API_URL: "http://localhost:8085"
+        VITE_API_URL: "http://stockable-backend:8085"
     container_name: stockable-frontend
     depends_on:
       - backend

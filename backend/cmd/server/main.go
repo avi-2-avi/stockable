@@ -21,7 +21,7 @@ func main() {
 	routes.RegisterRoutes(router, db)
 
 	log.Println("Server is running on port 8085")
-	if err := router.Run(":8085"); err != nil {
+	if err := router.Run("0.0.0.0:8085"); err != nil {
 		log.Fatal("Failed to start server: ", err)
 	}
 }

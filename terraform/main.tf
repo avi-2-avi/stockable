@@ -73,6 +73,13 @@ resource "aws_security_group" "stockable_sg" {
     cidr_blocks = ["0.0.0.0/0"] # HTTPS
   }
 
+  ingress {
+    from_port   = 8085
+    to_port     = 8085
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"] # Stockable API
+  }
+
   dynamic "ingress" {
     for_each = length(regexall("^\\d+\\.\\d+\\.\\d+\\.\\d+$", var.ssh_admin_ip)) > 0 ? [1] : []
     content {

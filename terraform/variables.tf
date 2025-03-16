@@ -33,8 +33,3 @@ variable "ec2_ami" {
   type        = string
   default     = "ami-00d4cdb3bda21c6ed"
 }
-
-variable "private_key_path" {
-  description = "Path to the private key file used for SSH"
-  type        = string
-}

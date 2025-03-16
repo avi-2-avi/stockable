@@ -15,7 +15,6 @@ mkdir -p /home/ec2-user/stockable
 chown ec2-user:ec2-user /home/ec2-user/stockable
 
 sudo -u ec2-user git clone https://github.com/avi-2-avi/stockable.git /home/ec2-user/stockable
-
 chown -R ec2-user:ec2-user /home/ec2-user/stockable
 
 cd /home/ec2-user/stockable

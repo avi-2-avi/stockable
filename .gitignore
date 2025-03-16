@@ -8,8 +8,6 @@
 *.log
 *.tmp
 *.swp
-*.sum
-*.mod
 *.db
 
 # Go build artifacts

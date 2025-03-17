@@ -10,10 +10,10 @@ echo "VITE_API_URL=http://$EC2_PUBLIC_IP:8085" > /home/ec2-user/stockable/fronte
 chown ec2-user:ec2-user /home/ec2-user/stockable/frontend/.env.local
 
 NGINX_CONF="/home/ec2-user/stockable/frontend/nginx.conf"
-sed -i "s|http://stockable-backend:8085/|http://$EC2_PUBLIC_IP:8085/|g" "$NGINX_CONF"
+sed -i "s|http://localhost:8085/|http://$EC2_PUBLIC_IP:8085/|g" "$NGINX_CONF"
 
 DOCKER_COMPOSE_FILE="/home/ec2-user/stockable/docker-compose.yml"
-sed -i "s|http://stockable-backend:8085|http://$EC2_PUBLIC_IP:8085|g" "$DOCKER_COMPOSE_FILE"
+sed -i "s|http://localhost:8085|http://$EC2_PUBLIC_IP:8085|g" "$DOCKER_COMPOSE_FILE"
 
 BACKEND_ENV="/home/ec2-user/stockable/backend/.env"
 if grep -q "^ALLOWED_ORIGIN=" "$BACKEND_ENV"; then

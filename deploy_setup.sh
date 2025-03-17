@@ -22,26 +22,7 @@ else
     echo "ALLOWED_ORIGIN=http://$EC2_PUBLIC_IP" >> "$BACKEND_ENV"
 fi
 
-SECURITY_GROUP_ID=$(aws ec2 describe-instances \
-  --query "Reservations[*].Instances[*].SecurityGroups[0].GroupId" \
-  --output text 2>/dev/null)
-
-if [[ -z "$SECURITY_GROUP_ID" ]]; then
-    echo "Error: Failed to retrieve Security Group ID."
-else
-    aws ec2 authorize-security-group-ingress \
-        --group-id "$SECURITY_GROUP_ID" \
-        --protocol tcp \
-        --port 8085 \
-        --cidr "${EC2_PUBLIC_IP}/32" 2>/dev/null
-
-    if [[ $? -ne 0 ]]; then
-        echo "Warning: Failed to update security group. Check permissions."
-    else
-        echo "Security group updated successfully."
-    fi
-fi
-
 echo "Running Docker Compose..."
 cd /home/ec2-user/stockable
+
 docker-compose up -d

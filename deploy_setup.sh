@@ -17,15 +17,10 @@ sed -i "s|http://stockable-backend:8085|http://$EC2_PUBLIC_IP:8085|g" "$DOCKER_C
 
 BACKEND_ENV="/home/ec2-user/stockable/backend/.env"
 if grep -q "^ALLOWED_ORIGIN=" "$BACKEND_ENV"; then
-    if ! grep -q "http://$EC2_PUBLIC_IP" "$BACKEND_ENV"; then
-        sed -i "s|^ALLOWED_ORIGIN=.*|&,"http://$EC2_PUBLIC_IP"|" "$BACKEND_ENV"
-    else
-        echo "ALLOWED_ORIGIN already contains http://$EC2_PUBLIC_IP, skipping..."
-    fi
+    sed -i "s|^ALLOWED_ORIGIN=.*|ALLOWED_ORIGIN=http://$EC2_PUBLIC_IP|" "$BACKEND_ENV"
 else
     echo "ALLOWED_ORIGIN=http://$EC2_PUBLIC_IP" >> "$BACKEND_ENV"
 fi
-
 
 SECURITY_GROUP_ID=$(aws ec2 describe-instances \
   --query "Reservations[*].Instances[*].SecurityGroups[0].GroupId" \

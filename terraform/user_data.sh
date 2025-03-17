@@ -21,19 +21,3 @@ cd /home/ec2-user/stockable
 sudo -u ec2-user git checkout feat/deploy-v2
 
 aws s3 cp s3://stockable-env-files/backend.env /home/ec2-user/stockable/backend/.env
-
-EC2_PUBLIC_IP=$(curl -s ifconfig.me)
-echo "VITE_API_URL=http://$EC2_PUBLIC_IP:8085" > /home/ec2-user/stockable/frontend/.env.local
-chown ec2-user:ec2-user /home/ec2-user/stockable/frontend/.env.local
-
-SECURITY_GROUP_ID=$(aws ec2 describe-instances \
-  --query "Reservations[*].Instances[*].SecurityGroups[0].GroupId" \
-  --output text)
-
-aws ec2 authorize-security-group-ingress \
-    --group-id $SECURITY_GROUP_ID \
-    --protocol tcp \
-    --port 8085 \
-    --cidr ${EC2_PUBLIC_IP}/32
-
-# docker-compose up -d

@@ -1,10 +1,5 @@
-networks:
-  stockable-network:
-
 services:
   backend:
-    networks:
-      - stockable-network
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -16,13 +11,11 @@ services:
     command: [ "./server" ]
 
   frontend:
-    networks:
-      - stockable-network
     build:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        VITE_API_URL: "http://stockable-backend:8085"
+        VITE_API_URL: "http://localhost:8085"
     container_name: stockable-frontend
     depends_on:
       - backend

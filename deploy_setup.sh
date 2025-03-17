@@ -26,3 +26,5 @@ echo "Running Docker Compose..."
 cd /home/ec2-user/stockable
 
 docker-compose up -d
+
+echo Running on: http://$EC2_PUBLIC_IP

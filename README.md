@@ -123,10 +123,66 @@ pnpm test:unit
 
 ## 🚀 Deployment <a name = "deployment"></a>
 
-For Docker deployment:
+### Move to the Terraform Directory
+Navigate to the `terraform` directory in your project:
 ```bash
-docker-compose up --build
+cd terraform
 ```
+
+### Log in to AWS SSO
+Run the following command to log in to AWS using SSO:
+```bash
+aws sso login
+```
+Ensure you have configured AWS SSO before attempting to log in.
+
+### Create and Configure Key Pair
+1. Go to AWS EC2 and create a key pair.
+2. Save the key pair as an RSA `.pem` file in the `terraform` directory.
+3. Change the permissions of the `.pem` file:
+   ```bash
+   chmod 400 stockable-test.pem
+   ```
+
+### Prepare Terraform Variables
+1. Copy the Terraform sample variables file:
+   ```bash
+   cp terraform.tfvars.sample terraform.tfvars
+   ```
+2. Open `terraform.tfvars` and fill in the required values.
+
+### Initialize Terraform
+Run the following command to initialize Terraform:
+```bash
+terraform init
+```
+
+### Apply Terraform Configuration
+Deploy the infrastructure using:
+```bash
+terraform apply -var-file="terraform.tfvars"
+```
+This will create the required AWS resources. The output will provide the SSH command to access the EC2 instance.
+
+### SSH into the EC2 Instance
+Wait for about 5 minutes, then use the provided SSH command to access the EC2 instance:
+```bash
+ssh -i "stockable-test.pem" ec2-user@ec2-0-0-0-0-0.compute-1.amazonaws.com
+```
+
+### Navigate to the Stockable Directory
+Once inside the EC2 instance, move to the `stockable` directory:
+```bash
+cd stockable
+```
+
+### Run Deployment Setup Script
+Execute the deployment setup script:
+```bash
+sh ./deploy_setup.sh
+```
+
+You will find in the output where the application is running.
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 

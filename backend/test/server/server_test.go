@@ -37,7 +37,7 @@ func TestPostAuthRegister(t *testing.T) {
 	routes.RegisterRoutes(router, db)
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("POST", "/auth/register", nil)
+	req, _ := http.NewRequest("POST", "/api/auth/register", nil)
 	router.ServeHTTP(w, req)
 
 	assert.NoError(t, dbErr, "Database connection should not return an error")
@@ -60,7 +60,7 @@ func TestPostAuthLogin(t *testing.T) {
 	routes.RegisterRoutes(router, db)
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("POST", "/auth/login", nil)
+	req, _ := http.NewRequest("POST", "/api/auth/login", nil)
 	router.ServeHTTP(w, req)
 
 	assert.NoError(t, dbErr, "Database connection should not return an error")
@@ -83,7 +83,7 @@ func TestPostAuthLogout(t *testing.T) {
 	routes.RegisterRoutes(router, db)
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("POST", "/auth/logout", nil)
+	req, _ := http.NewRequest("POST", "/api/auth/logout", nil)
 	router.ServeHTTP(w, req)
 
 	assert.NoError(t, dbErr, "Database connection should not return an error")
@@ -106,7 +106,7 @@ func TestGetAnalystRatings(t *testing.T) {
 	routes.RegisterRoutes(router, db)
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/ratings", nil)
+	req, _ := http.NewRequest("GET", "/api/ratings", nil)
 	router.ServeHTTP(w, req)
 
 	assert.NoError(t, dbErr, "Database connection should not return an error")
@@ -135,7 +135,7 @@ func TestGetAnalystRatingsIndicators(t *testing.T) {
 	routes.RegisterRoutes(router, db)
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/ratings/indicators", nil)
+	req, _ := http.NewRequest("GET", "/api/ratings/indicators", nil)
 	router.ServeHTTP(w, req)
 
 	assert.NoError(t, dbErr, "Database connection should not return an error")
@@ -164,7 +164,7 @@ func TestGetSources(t *testing.T) {
 	routes.RegisterRoutes(router, db)
 
 	w := httptest.NewRecorder()
-	req, _ := http.NewRequest("GET", "/sources", nil)
+	req, _ := http.NewRequest("GET", "/api/sources", nil)
 	router.ServeHTTP(w, req)
 
 	assert.NoError(t, dbErr, "Database connection should not return an error")

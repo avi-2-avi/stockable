@@ -39,7 +39,7 @@ export const useRatingStore = defineStore('rating', () => {
     error.value = null
 
     try {
-      const response = await axios.get(import.meta.env.VITE_API_URL + '/ratings', {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/ratings`, {
         params: {
           source_id: selectedSource.value,
           page: page.value,

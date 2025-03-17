@@ -1,6 +1,6 @@
 <template>
   <BaseNavbar>
-    <Button label="Sign in" size="md" variant="subtle" @click="redirectToLogin" />
+    <Button label="Sign in" size="md" @click="redirectToLogin" />
   </BaseNavbar>
 </template>
 

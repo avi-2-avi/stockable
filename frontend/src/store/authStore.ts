@@ -26,7 +26,7 @@ export const useAuthStore = defineStore(
     const login = async (email: string, password: string) => {
       try {
         const response: LoginResponse = await axios.post(
-          `${import.meta.env.VITE_API_URL}/auth/login`,
+          `${import.meta.env.VITE_API_URL}/api/auth/login`,
           {
             email,
             password,
@@ -44,7 +44,7 @@ export const useAuthStore = defineStore(
 
     const register = async (fullName: string, email: string, password: string) => {
       try {
-        await axios.post(`${import.meta.env.VITE_API_URL}/auth/register`, {
+        await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
           full_name: fullName,
           email,
           password,
@@ -59,7 +59,7 @@ export const useAuthStore = defineStore(
     const logout = async () => {
       try {
         await axios.post(
-          `${import.meta.env.VITE_API_URL}/auth/logout`,
+          `${import.meta.env.VITE_API_URL}/api/auth/logout`,
           {},
           { withCredentials: true },
         )

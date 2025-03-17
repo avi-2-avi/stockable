@@ -8,8 +8,6 @@
 *.log
 *.tmp
 *.swp
-*.sum
-*.mod
 *.db
 
 # Go build artifacts
@@ -53,7 +51,12 @@ pnpm-debug.log*
 .terraform/
 terraform.tfstate
 terraform.tfstate.backup
+*.terraform.tfstate.lock.info
 *.tfvars
 *.tfstate
 *.tfstate.backup
 .terraform.lock.hcl
+tfplan
+
+# Pem files
+*.pem

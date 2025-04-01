@@ -15,12 +15,12 @@ import (
 type TruAdapter struct {
 	apiURL         string
 	token          string
-	ratingService  services.AnalystRatingsService
+	ratingService  services.AnalystRatingService
 	companyService services.CompanyService
 	dataSourceID   uuid.UUID
 }
 
-func NewTruAdapter(apiURL string, token string, ratingService services.AnalystRatingsService, companyService services.CompanyService, dataSourceID uuid.UUID) RatingAdapter {
+func NewTruAdapter(apiURL string, token string, ratingService services.AnalystRatingService, companyService services.CompanyService, dataSourceID uuid.UUID) RatingAdapter {
 	return &TruAdapter{
 		apiURL:         apiURL,
 		token:          token,

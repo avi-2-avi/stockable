@@ -6,47 +6,40 @@ import (
 	"backend/internal/repositories"
 )
 
-type AnalystRatingsService interface {
+type AnalystRatingService interface {
 	SaveAnalystRating(rating *models.AnalystRating) error
 	SaveAnalystRatingsBatch(ratings []models.AnalystRating) error
 	GetAll(sortOrder, sortBy, sourceID string, filters map[string]string, page, limit int) ([]models.AnalystRating, int64, error)
 	GetIndicators(sourceID string) (dtos.AnalystRatingIndicatorsDTO, error)
-	GetRecommendations() ([]models.AnalystRating, error)
 	GetMinMaxCPI() (float64, float64, error)
 }
 
-type analystRatingsService struct {
-	ratingRepo *repositories.AnalystRatingsRepository
+type analystRatingService struct {
+	ratingRepo *repositories.AnalystRatingRepository
 }
 
-func NewAnalystRatingsService(ratingRepo *repositories.AnalystRatingsRepository) AnalystRatingsService {
-	return &analystRatingsService{
+func NewAnalystRatingService(ratingRepo *repositories.AnalystRatingRepository) AnalystRatingService {
+	return &analystRatingService{
 		ratingRepo: ratingRepo,
 	}
 }
 
-func (service *analystRatingsService) SaveAnalystRating(rating *models.AnalystRating) error {
+func (service *analystRatingService) SaveAnalystRating(rating *models.AnalystRating) error {
 	return service.ratingRepo.Create(rating)
 }
 
-func (service *analystRatingsService) SaveAnalystRatingsBatch(ratings []models.AnalystRating) error {
+func (service *analystRatingService) SaveAnalystRatingsBatch(ratings []models.AnalystRating) error {
 	return service.ratingRepo.CreateBatch(ratings)
 }
 
-func (service *analystRatingsService) GetAll(sortOrder, sortBy, sourceID string, filters map[string]string, page, limit int) ([]models.AnalystRating, int64, error) {
+func (service *analystRatingService) GetAll(sortOrder, sortBy, sourceID string, filters map[string]string, page, limit int) ([]models.AnalystRating, int64, error) {
 	return service.ratingRepo.GetAll(sortOrder, sortBy, sourceID, filters, page, limit)
 }
 
-func (service *analystRatingsService) GetMinMaxCPI() (float64, float64, error) {
+func (service *analystRatingService) GetMinMaxCPI() (float64, float64, error) {
 	return service.ratingRepo.GetMinMaxCPI()
 }
 
-func (service *analystRatingsService) GetIndicators(sourceID string) (dtos.AnalystRatingIndicatorsDTO, error) {
+func (service *analystRatingService) GetIndicators(sourceID string) (dtos.AnalystRatingIndicatorsDTO, error) {
 	return service.ratingRepo.GetIndicators(sourceID)
-}
-
-// TODO: Implement the GetRecommendations method
-
-func (service *analystRatingsService) GetRecommendations() ([]models.AnalystRating, error) {
-	return service.ratingRepo.GetRecommendations()
 }

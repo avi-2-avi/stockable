@@ -13,20 +13,20 @@ import (
 type AdapterConstructor func(*AdapterFactory) adapters.RatingAdapter
 
 type AdapterFactory struct {
-	config             *config.Config
-	dataSourceRepo     *repositories.DataSourceRepository
-	analystRatingsRepo *repositories.AnalystRatingsRepository
-	companyRepo        *repositories.CompanyRepository
-	adapterRegistry    map[string]AdapterConstructor
+	config            *config.Config
+	dataSourceRepo    *repositories.DataSourceRepository
+	analystRatingRepo *repositories.AnalystRatingRepository
+	companyRepo       *repositories.CompanyRepository
+	adapterRegistry   map[string]AdapterConstructor
 }
 
 func NewAdapterFactory(config *config.Config, db *gorm.DB) *AdapterFactory {
 	factory := &AdapterFactory{
-		config:             config,
-		dataSourceRepo:     repositories.NewDataSourceRepository(db),
-		analystRatingsRepo: repositories.NewAnalystRatingsRepository(db),
-		companyRepo:        repositories.NewCompanyRepository(db),
-		adapterRegistry:    make(map[string]AdapterConstructor),
+		config:            config,
+		dataSourceRepo:    repositories.NewDataSourceRepository(db),
+		analystRatingRepo: repositories.NewAnalystRatingRepository(db),
+		companyRepo:       repositories.NewCompanyRepository(db),
+		adapterRegistry:   make(map[string]AdapterConstructor),
 	}
 	return factory
 }
@@ -44,8 +44,8 @@ func (f *AdapterFactory) CreateAdapter(name string) (adapters.RatingAdapter, err
 	return constructor(f), nil
 }
 
-func (f *AdapterFactory) GetAnalystRatingsRepo() *repositories.AnalystRatingsRepository {
-	return f.analystRatingsRepo
+func (f *AdapterFactory) GetAnalystRatingRepository() *repositories.AnalystRatingRepository {
+	return f.analystRatingRepo
 }
 
 func (f *AdapterFactory) GetCompanyRepository() *repositories.CompanyRepository {

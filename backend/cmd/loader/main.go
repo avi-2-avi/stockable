@@ -39,7 +39,7 @@ func main() {
 	dummySource := adapterFactory.CreateDataSource("DummyAdapter", false)
 
 	adapterFactory.RegisterAdapter("DummyAdapter", func(factory *manager.AdapterFactory) adapters.RatingAdapter {
-		analystService := services.NewAnalystRatingsService(factory.GetAnalystRatingsRepo())
+		analystService := services.NewAnalystRatingService(factory.GetAnalystRatingRepository())
 		companyService := services.NewCompanyService(factory.GetCompanyRepository())
 		return adapters.NewDummyAdapter(analystService, companyService, dummySource.ID)
 	})
@@ -52,7 +52,7 @@ func main() {
 			return nil
 		}
 
-		analystService := services.NewAnalystRatingsService(factory.GetAnalystRatingsRepo())
+		analystService := services.NewAnalystRatingService(factory.GetAnalystRatingRepository())
 		companyService := services.NewCompanyService(factory.GetCompanyRepository())
 		return adapters.NewTruAdapter(
 			config.TruAdapterURL,

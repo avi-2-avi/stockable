@@ -11,12 +11,12 @@ import (
 )
 
 type DummyAdapter struct {
-	ratingService  services.AnalystRatingsService
+	ratingService  services.AnalystRatingService
 	companyService services.CompanyService
 	dataSourceID   uuid.UUID
 }
 
-func NewDummyAdapter(ratingService services.AnalystRatingsService, companyService services.CompanyService, dataSourceID uuid.UUID) RatingAdapter {
+func NewDummyAdapter(ratingService services.AnalystRatingService, companyService services.CompanyService, dataSourceID uuid.UUID) RatingAdapter {
 	return &DummyAdapter{
 		ratingService:  ratingService,
 		companyService: companyService,

@@ -11,10 +11,10 @@ import (
 )
 
 type AnalystRatingController struct {
-	RatingService services.AnalystRatingsService
+	RatingService services.AnalystRatingService
 }
 
-func NewAnalystRatingController(ratingService services.AnalystRatingsService) *AnalystRatingController {
+func NewAnalystRatingController(ratingService services.AnalystRatingService) *AnalystRatingController {
 	return &AnalystRatingController{
 		RatingService: ratingService,
 	}

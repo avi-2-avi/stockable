@@ -13,7 +13,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-func TestAnalystRatingsRepository(t *testing.T) {
+func TestAnalystRatingRepository(t *testing.T) {
 	os.Setenv("DATABASE_URL", "postgresql://root@localhost:26257/defaultdb?sslmode=disable")
 	db, dbErr := database.Connect()
 	db.Config.Logger = logger.Default.LogMode(logger.Silent)
@@ -25,7 +25,7 @@ func TestAnalystRatingsRepository(t *testing.T) {
 	company := models.Company{Name: "Company-TEST"}
 	_ = companyRepo.Create(&company)
 
-	ratingRepo := repositories.NewAnalystRatingsRepository(db)
+	ratingRepo := repositories.NewAnalystRatingRepository(db)
 	rating := models.AnalystRating{
 		TargetFrom:   120.5,
 		TargetTo:     130.0,

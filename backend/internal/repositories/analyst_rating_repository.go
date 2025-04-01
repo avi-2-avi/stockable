@@ -9,26 +9,26 @@ import (
 	"gorm.io/gorm"
 )
 
-type AnalystRatingsRepository struct {
+type AnalystRatingRepository struct {
 	db *gorm.DB
 }
 
-func NewAnalystRatingsRepository(db *gorm.DB) *AnalystRatingsRepository {
-	return &AnalystRatingsRepository{db: db}
+func NewAnalystRatingRepository(db *gorm.DB) *AnalystRatingRepository {
+	return &AnalystRatingRepository{db: db}
 }
 
-func (r *AnalystRatingsRepository) Create(rating *models.AnalystRating) error {
+func (r *AnalystRatingRepository) Create(rating *models.AnalystRating) error {
 	return r.db.Create(rating).Error
 }
 
-func (r *AnalystRatingsRepository) CreateBatch(ratings []models.AnalystRating) error {
+func (r *AnalystRatingRepository) CreateBatch(ratings []models.AnalystRating) error {
 	if len(ratings) == 0 {
 		return nil
 	}
 	return r.db.Create(&ratings).Error
 }
 
-func (r *AnalystRatingsRepository) GetByID(id uuid.UUID) (*models.AnalystRating, error) {
+func (r *AnalystRatingRepository) GetByID(id uuid.UUID) (*models.AnalystRating, error) {
 	var rating models.AnalystRating
 	err := r.db.First(&rating, id).Error
 	if err != nil {
@@ -37,7 +37,7 @@ func (r *AnalystRatingsRepository) GetByID(id uuid.UUID) (*models.AnalystRating,
 	return &rating, nil
 }
 
-func (r *AnalystRatingsRepository) GetAll(sortOrder, sortBy, sourceID string, filters map[string]string, page, limit int) ([]models.AnalystRating, int64, error) {
+func (r *AnalystRatingRepository) GetAll(sortOrder, sortBy, sourceID string, filters map[string]string, page, limit int) ([]models.AnalystRating, int64, error) {
 	var ratings []models.AnalystRating
 	var total int64
 	query := r.db
@@ -110,7 +110,7 @@ func applyPagination(query *gorm.DB, page, limit int) *gorm.DB {
 	return query.Limit(limit).Offset(offset)
 }
 
-func (r *AnalystRatingsRepository) GetIndicators(sourceID string) (dtos.AnalystRatingIndicatorsDTO, error) {
+func (r *AnalystRatingRepository) GetIndicators(sourceID string) (dtos.AnalystRatingIndicatorsDTO, error) {
 	var dto dtos.AnalystRatingIndicatorsDTO
 
 	totalCount, err := r.getTotalRatingsCount(sourceID)
@@ -140,7 +140,7 @@ func (r *AnalystRatingsRepository) GetIndicators(sourceID string) (dtos.AnalystR
 	return dto, nil
 }
 
-func (r *AnalystRatingsRepository) getTotalRatingsCount(sourceID string) (int64, error) {
+func (r *AnalystRatingRepository) getTotalRatingsCount(sourceID string) (int64, error) {
 	var totalCount int64
 	query := r.db.Model(&models.AnalystRating{})
 	if sourceID != "" {
@@ -150,7 +150,7 @@ func (r *AnalystRatingsRepository) getTotalRatingsCount(sourceID string) (int64,
 	return totalCount, err
 }
 
-func (r *AnalystRatingsRepository) getBuyNowPercentage(sourceID string, totalCount int64) (float64, error) {
+func (r *AnalystRatingRepository) getBuyNowPercentage(sourceID string, totalCount int64) (float64, error) {
 	minCPI, maxCPI, err := r.GetMinMaxCPI()
 	if err != nil {
 		return 0, err
@@ -177,7 +177,7 @@ func (r *AnalystRatingsRepository) getBuyNowPercentage(sourceID string, totalCou
 	return float64(buyNowCount) / float64(totalCount) * 100, nil
 }
 
-func (r *AnalystRatingsRepository) getPositiveTargetAdjustmentPercentage(sourceID string, totalCount int64) (float64, error) {
+func (r *AnalystRatingRepository) getPositiveTargetAdjustmentPercentage(sourceID string, totalCount int64) (float64, error) {
 	var positiveCount int64
 	query := r.db.Model(&models.AnalystRating{}).Where("target_adjustment_percentage > 0")
 	if sourceID != "" {
@@ -190,7 +190,7 @@ func (r *AnalystRatingsRepository) getPositiveTargetAdjustmentPercentage(sourceI
 	return float64(positiveCount) / float64(totalCount) * 100, nil
 }
 
-func (r *AnalystRatingsRepository) getHighestIncrementInTargetPrice(sourceID string) (models.AnalystRating, error) {
+func (r *AnalystRatingRepository) getHighestIncrementInTargetPrice(sourceID string) (models.AnalystRating, error) {
 	var rating models.AnalystRating
 
 	subQuery := r.db.Model(&models.AnalystRating{}).
@@ -209,7 +209,7 @@ func (r *AnalystRatingsRepository) getHighestIncrementInTargetPrice(sourceID str
 
 	return rating, nil
 }
-func (r *AnalystRatingsRepository) GetMinMaxCPI() (float64, float64, error) {
+func (r *AnalystRatingRepository) GetMinMaxCPI() (float64, float64, error) {
 	var result struct {
 		Min float64 `gorm:"column:min"`
 		Max float64 `gorm:"column:max"`
@@ -225,7 +225,7 @@ func (r *AnalystRatingsRepository) GetMinMaxCPI() (float64, float64, error) {
 	return result.Min, result.Max, nil
 }
 
-func (r *AnalystRatingsRepository) GetRecommendations() ([]models.AnalystRating, error) {
+func (r *AnalystRatingRepository) GetRecommendations() ([]models.AnalystRating, error) {
 	// TODO: Change how to get recommendations
 	var ratings []models.AnalystRating
 	err := r.db.Where("action = ?", "Buy").Find(&ratings).Error
@@ -235,6 +235,6 @@ func (r *AnalystRatingsRepository) GetRecommendations() ([]models.AnalystRating,
 	return ratings, nil
 }
 
-func (r *AnalystRatingsRepository) Delete(id uuid.UUID) error {
+func (r *AnalystRatingRepository) Delete(id uuid.UUID) error {
 	return r.db.Delete(&models.AnalystRating{}, id).Error
 }

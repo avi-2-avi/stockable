@@ -37,8 +37,8 @@ const sizeClasses: Record<typeof sizes[number], string> = {
     xs: 'px-2 py-1 text-xs',
     sm: 'px-3 py-1 text-sm',
     md: 'px-4 py-2 text-sm',
-    lg: 'px-5 py-3 text-base',
-    xl: 'px-6 py-4 text-lg',
+    lg: 'px-5 py-3 text-lg',
+    xl: 'px-6 py-4 text-xl',
 }
 
 const variantClasses: Record<typeof variants[number], string> = {

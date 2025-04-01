@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { Calculator as CalculatorIcon } from 'lucide-vue-next';
-import Card from '@/components/Card.vue';
+import Card from '@/components/ui/Card.vue';
 
 defineProps({
     cardClass: {

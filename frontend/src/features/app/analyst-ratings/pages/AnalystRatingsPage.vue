@@ -15,11 +15,11 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
-import CalculationsModal from '@/features/app/components/CalculationsModal.vue'
-import HomeCard from '@/features/app/components/HomeCard.vue'
-import CalculationsCard from '@/features/app/components/CalculationsCard.vue'
-import ExcelCard from '../../components/ExcelCard.vue';
-import RatingTable from '@/features/app/components/RatingTable.vue'
+import CalculationsModal from '@/features/app/analyst-ratings/components/CalculationsModal.vue'
+import HomeCard from '@/features/app/analyst-ratings/components/InfoCard.vue'
+import CalculationsCard from '@/features/app/analyst-ratings/components/CalculationsCard.vue'
+import ExcelCard from '../components/ExcelCard.vue';
+import RatingTable from '@/features/app/analyst-ratings/components/RatingTable.vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 import { ChartNoAxesCombined, CircleDollarSign, TrendingUp } from 'lucide-vue-next';
 import { useIndicatorStore } from '@/store/indicatorStore';

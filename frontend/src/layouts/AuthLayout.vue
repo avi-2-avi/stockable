@@ -9,6 +9,6 @@
 </template>
 
 <script setup lang="ts">
-import BaseNavbar from '@/components/BaseNavbar.vue';
+import BaseNavbar from '@/components/navigation/BaseNavbar.vue';
 import LandingFooter from '@/features/landing/components/LandingFooter.vue';
 </script>

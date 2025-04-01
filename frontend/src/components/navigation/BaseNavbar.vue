@@ -2,7 +2,7 @@
   <nav class="w-full fixed top-0 left-0 z-50 bg-stock-200/50 backdrop-blur-lg p-4 flex justify-between items-center">
     <div class="flex items-center">
       <div @click="redirectToDefault" class="flex items-center cursor-pointer">
-        <img src="@/assets/logo.svg" alt="Logo" class="h-10 w-auto" />
+        <img src="@/assets/logo.webp" alt="Logo" class="h-10 w-auto" />
         <p class="logo pl-2.5">Stockable</p>
       </div>
     </div>

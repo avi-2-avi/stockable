@@ -12,21 +12,21 @@
 </template>
 
 <script setup lang="ts">
-import Button from '@/components/Button.vue'
-import BaseNavbar from '@/components/BaseNavbar.vue'
+import Button from '@/components/ui/Button.vue'
+import BaseNavbar from '@/components/navigation/BaseNavbar.vue'
 import { useAuthStore } from '@/store/authStore'
 
 const authStore = useAuthStore()
 
 const routes = [
   {
-    name: 'Home',
-    path: '/app/home',
+    name: 'Dashboard',
+    path: '/app/dashboard',
   },
-  // {
-  //   name: 'History',
-  //   path: '/app/history',
-  // }
+  {
+    name: 'Analyst Ratings',
+    path: '/app/analyst-ratings',
+  }
 ]
 
 const logOut = async () => {

@@ -7,24 +7,27 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"gorm.io/gorm/logger"
 )
 
-func TestDataSourceRepository(t *testing.T) {
+func TestAdapterLogRepository(t *testing.T) {
 	os.Setenv("DATABASE_URL", "postgresql://root@localhost:26257/defaultdb?sslmode=disable")
 	db, dbErr := database.Connect()
 	db.Config.Logger = logger.Default.LogMode(logger.Silent)
 	migrationErr := database.Migrate(db)
+	adapterLogRepo := repositories.NewAdapterLogRepository(db)
+	adapterLog := models.AdapterLog{
+		AdapterName: "API-TEST",
+		RunAt:       time.Now(),
+	}
 
-	dataSourceRepo := repositories.NewDataSourceRepository(db)
-	dataSource := models.DataSource{Name: "API-TEST"}
-	repoErr := dataSourceRepo.Create(&dataSource)
-	fetchedSource, fetchErr := dataSourceRepo.GetByID(dataSource.ID)
+	adapterLogRepoErr := adapterLogRepo.Create(&adapterLog)
 
 	t.Cleanup(func() {
-		dataSourceRepo.Delete(dataSource.ID)
+		adapterLogRepo.Delete(adapterLog.ID)
 
 		tables, err := db.Migrator().GetTables()
 		if err == nil {
@@ -44,8 +47,5 @@ func TestDataSourceRepository(t *testing.T) {
 	assert.NoError(t, dbErr, "Database connection should not return an error")
 	assert.NotNil(t, db, "Database connection should not be nil")
 	assert.NoError(t, migrationErr, "Database migration should not return an error")
-	assert.NoError(t, repoErr, "Should create data source without error")
-	assert.NotZero(t, dataSource.ID, "DataSource ID should be set")
-	assert.NoError(t, fetchErr, "Should fetch data source without error")
-	assert.Equal(t, "API-TEST", fetchedSource.Name, "Fetched data source should match")
+	assert.NoError(t, adapterLogRepoErr, "Should create data source without error")
 }

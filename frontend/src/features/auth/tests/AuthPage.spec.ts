@@ -1,7 +1,7 @@
 import { mount } from '@vue/test-utils'
 import { describe, it, expect, vi } from 'vitest'
 import AuthPage from '../pages/LoginPage.vue'
-import BaseNavbar from '@/components/BaseNavbar.vue'
+import BaseNavbar from '@/components/navigation/BaseNavbar.vue'
 
 vi.mock('axios', () => ({
   default: {

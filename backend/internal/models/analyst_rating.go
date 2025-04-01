@@ -9,10 +9,8 @@ import (
 
 type AnalystRating struct {
 	ID                         uuid.UUID `json:"id" gorm:"type:uuid;default:gen_random_uuid();primaryKey"`
-	Ticker                     string    `gorm:"not null"`
 	TargetFrom                 float64   `gorm:"not null"`
 	TargetTo                   float64   `gorm:"not null"`
-	Company                    string    `gorm:"not null"`
 	Action                     string    `gorm:"not null"`
 	Brokerage                  string    `gorm:"not null"`
 	RatingFrom                 string    `gorm:"not null"`
@@ -28,9 +26,7 @@ type AnalystRating struct {
 
 	DataSourceID uuid.UUID  `gorm:"not null"`
 	DataSource   DataSource `gorm:"foreignKey:DataSourceID"`
-}
 
-func (r *AnalystRating) BeforeCreate(tx *gorm.DB) (err error) {
-	r.ID = uuid.New()
-	return
+	CompanyID uuid.UUID `gorm:"not null"`
+	Company   Company   `gorm:"foreignKey:CompanyID"`
 }

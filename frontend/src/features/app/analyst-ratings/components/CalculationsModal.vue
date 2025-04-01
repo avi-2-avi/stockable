@@ -84,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import Button from '@/components/Button.vue';
+import Button from '@/components/ui/Button.vue';
 defineEmits(["close"]);
 const rciMatrix = [
     { label: "Strong-Buy", values: [4, 3, -2, -4, -1, -2] },

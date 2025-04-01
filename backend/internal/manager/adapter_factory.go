@@ -5,66 +5,74 @@ import (
 	"backend/internal/adapters"
 	"backend/internal/models"
 	"backend/internal/repositories"
-	"backend/internal/services"
 	"fmt"
 
 	"gorm.io/gorm"
 )
 
+type AdapterConstructor func(*AdapterFactory) adapters.RatingAdapter
+
 type AdapterFactory struct {
 	config             *config.Config
 	dataSourceRepo     *repositories.DataSourceRepository
 	analystRatingsRepo *repositories.AnalystRatingsRepository
+	companyRepo        *repositories.CompanyRepository
+	adapterRegistry    map[string]AdapterConstructor
 }
 
 func NewAdapterFactory(config *config.Config, db *gorm.DB) *AdapterFactory {
-	return &AdapterFactory{
+	factory := &AdapterFactory{
 		config:             config,
 		dataSourceRepo:     repositories.NewDataSourceRepository(db),
 		analystRatingsRepo: repositories.NewAnalystRatingsRepository(db),
+		companyRepo:        repositories.NewCompanyRepository(db),
+		adapterRegistry:    make(map[string]AdapterConstructor),
 	}
+	return factory
 }
 
-func (f *AdapterFactory) CreateAdapter(name string) adapters.RatingAdapter {
-	switch name {
-	case "TruAdapter":
-		truSource, _ := f.dataSourceRepo.GetByName("TruAdapter")
-		if truSource == nil {
-			fmt.Printf("Creating new data source: %s\n", "TruAdapter")
-			truSource = &models.DataSource{Name: "TruAdapter"}
-			if err := f.dataSourceRepo.Create(truSource); err != nil {
-				fmt.Println("Error creating DataSource:", err)
-				return nil
-			}
-			fmt.Printf("New DataSource created with ID: %s\n", truSource.ID)
-		} else {
-			fmt.Printf("Existing DataSource found with ID: %s\n", truSource.ID)
-		}
+func (f *AdapterFactory) RegisterAdapter(name string, constructor AdapterConstructor) {
+	f.adapterRegistry[name] = constructor
+}
 
-		analystService := services.NewAnalystRatingsService(f.analystRatingsRepo)
-		return adapters.NewTruAdapter(
-			f.config.TruAdapterURL,
-			f.config.TruAdapterToken,
-			analystService,
-			truSource.ID,
-		)
-	case "DummyAdapter":
-		dummySource, _ := f.dataSourceRepo.GetByName("DummyAdapter")
-		if dummySource == nil {
-			fmt.Printf("Creating new data source: %s\n", "DummyAdapter")
-			dummySource = &models.DataSource{Name: "DummyAdapter"}
-			if err := f.dataSourceRepo.Create(dummySource); err != nil {
-				fmt.Println("Error creating DataSource:", err)
-				return nil
-			}
-			fmt.Printf("New DataSource created with ID: %s\n", dummySource.ID)
-		} else {
-			fmt.Printf("Existing DataSource found with ID: %s\n", dummySource.ID)
-		}
+func (f *AdapterFactory) CreateAdapter(name string) (adapters.RatingAdapter, error) {
+	fmt.Printf("Creating adapter: %s\n", name)
+	constructor, exists := f.adapterRegistry[name]
+	if !exists {
+		return nil, fmt.Errorf("adapter not found: %s", name)
+	}
+	return constructor(f), nil
+}
 
-		analystService := services.NewAnalystRatingsService(f.analystRatingsRepo)
-		return adapters.NewDummyAdapter(analystService, dummySource.ID)
-	default:
+func (f *AdapterFactory) GetAnalystRatingsRepo() *repositories.AnalystRatingsRepository {
+	return f.analystRatingsRepo
+}
+
+func (f *AdapterFactory) GetCompanyRepository() *repositories.CompanyRepository {
+	return f.companyRepo
+}
+
+func (f *AdapterFactory) CreateDataSource(name string, isVisible bool) *models.DataSource {
+	fmt.Printf("Creating data source: %s\n", name)
+	dataSource, err := f.dataSourceRepo.GetByName(name)
+	if err != nil {
+		fmt.Printf("Error retrieving DataSource '%s': %v\n", name, err)
 		return nil
 	}
+
+	if dataSource == nil {
+		fmt.Printf("Creating new data source: %s\n", name)
+		dataSource = &models.DataSource{
+			Name:      name,
+			IsVisible: isVisible,
+		}
+		if err := f.dataSourceRepo.Create(dataSource); err != nil {
+			fmt.Println("Error creating DataSource:", err)
+			return nil
+		}
+		fmt.Printf("New DataSource created with ID: %s\n", dataSource.ID)
+	} else {
+		fmt.Printf("Existing DataSource found with ID: %s\n", dataSource.ID)
+	}
+	return dataSource
 }

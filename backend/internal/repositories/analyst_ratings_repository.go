@@ -134,8 +134,8 @@ func (r *AnalystRatingsRepository) GetIndicators(sourceID string) (dtos.AnalystR
 	}
 
 	dto.HighestIncrementInTargetPrice = highestIncrementRating.TargetTo - highestIncrementRating.TargetFrom
-	dto.HighestIncrementInTargetPriceTicker = highestIncrementRating.Ticker
-	dto.HighestIncrementInTargetPriceName = highestIncrementRating.Company
+	// dto.HighestIncrementInTargetPriceTicker = highestIncrementRating.Ticker
+	// dto.HighestIncrementInTargetPriceName = highestIncrementRating.Company
 
 	return dto, nil
 }
@@ -233,4 +233,8 @@ func (r *AnalystRatingsRepository) GetRecommendations() ([]models.AnalystRating,
 		return nil, err
 	}
 	return ratings, nil
+}
+
+func (r *AnalystRatingsRepository) Delete(id uuid.UUID) error {
+	return r.db.Delete(&models.AnalystRating{}, id).Error
 }

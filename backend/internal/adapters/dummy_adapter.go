@@ -11,14 +11,16 @@ import (
 )
 
 type DummyAdapter struct {
-	service      services.AnalystRatingsService
-	dataSourceID uuid.UUID
+	ratingService  services.AnalystRatingsService
+	companyService services.CompanyService
+	dataSourceID   uuid.UUID
 }
 
-func NewDummyAdapter(service services.AnalystRatingsService, dataSourceID uuid.UUID) RatingAdapter {
+func NewDummyAdapter(ratingService services.AnalystRatingsService, companyService services.CompanyService, dataSourceID uuid.UUID) RatingAdapter {
 	return &DummyAdapter{
-		service:      service,
-		dataSourceID: dataSourceID,
+		ratingService:  ratingService,
+		companyService: companyService,
+		dataSourceID:   dataSourceID,
 	}
 }
 
@@ -34,7 +36,6 @@ func (dummyAdapter *DummyAdapter) FetchData() ([]models.AnalystRating, error) {
 		{"TSLA", "Tesla Inc."},
 		{"NVDA", "NVIDIA Corp."},
 		{"META", "Meta Platforms Inc."},
-		{"BRK.B", "Berkshire Hathaway Inc."},
 		{"V", "Visa Inc."},
 		{"JNJ", "Johnson & Johnson"},
 		{"WMT", "Walmart Inc."},
@@ -53,14 +54,17 @@ func (dummyAdapter *DummyAdapter) FetchData() ([]models.AnalystRating, error) {
 
 	var ratings []models.AnalystRating
 	for _, company := range companies {
+		existingCompany, err := dummyAdapter.companyService.CreateCompanyByTicker(company.Ticker, company.Company)
+		if err != nil {
+			return nil, err
+		}
+
 		targetFrom := rand.Float64()*100 + 50
 		targetTo := targetFrom + rand.Float64()*20
 		ratingFrom := ratingOptions[rand.Intn(len(ratingOptions))]
 		ratingTo := ratingOptions[rand.Intn(len(ratingOptions))]
 
 		rating := models.AnalystRating{
-			Ticker:                     company.Ticker,
-			Company:                    company.Company,
 			TargetFrom:                 targetFrom,
 			TargetTo:                   targetTo,
 			Action:                     "upgraded by",
@@ -68,16 +72,17 @@ func (dummyAdapter *DummyAdapter) FetchData() ([]models.AnalystRating, error) {
 			RatingFrom:                 ratingFrom,
 			RatingTo:                   ratingTo,
 			RatedAt:                    time.Now(),
-			DataSourceID:               dummyAdapter.dataSourceID,
 			ActionImpactScore:          utils.CalculateActionImpactScore("upgraded by"),
 			RatingChangeImpact:         utils.CalculateRatingChangeImpact(ratingFrom, ratingTo),
 			TargetAdjustmentPercentage: utils.CalculateTargetAdjustment(targetFrom, targetTo),
+			DataSourceID:               dummyAdapter.dataSourceID,
+			CompanyID:                  existingCompany.ID,
 		}
 		rating.CombinedPredictionIndex = utils.CalculateRawCPI(rating.ActionImpactScore, rating.RatingChangeImpact, rating.TargetAdjustmentPercentage)
 		ratings = append(ratings, rating)
 	}
 
-	err := dummyAdapter.service.SaveAnalystRatingsBatch(ratings)
+	err := dummyAdapter.ratingService.SaveAnalystRatingsBatch(ratings)
 	if err != nil {
 		return nil, err
 	}

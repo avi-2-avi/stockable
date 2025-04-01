@@ -16,7 +16,7 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-func TestAdapterManager_RunAdapters_All(t *testing.T) {
+func TestAdapterFactory_CreateAdapter(t *testing.T) {
 	mockServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte(`{"items": [], "next_page": ""}`))
@@ -66,42 +66,10 @@ func TestAdapterManager_RunAdapters_All(t *testing.T) {
 			source.ID,
 		)
 	})
-	_, createAdapterErr := adapterFactory.CreateAdapter("TruAdapter")
+	adapter, err := adapterFactory.CreateAdapter("TruAdapter")
 
-	adapterManager := manager.NewAdapterManager(adapterFactory, db)
-	runAdaptersErr := adapterManager.RunAdapters("")
+	assert.NotNil(t, adapterFactory)
+	assert.NoError(t, err)
+	assert.NotNil(t, adapter)
 
-	assert.NoError(t, createAdapterErr)
-	assert.NoError(t, runAdaptersErr)
-}
-
-func TestAdapterManager_RunAdapters_Specific(t *testing.T) {
-	mockEnvContent := "DATABASE_URL=postgresql://root@localhost:26257/defaultdb?sslmode=disable"
-	os.WriteFile(".env", []byte(mockEnvContent), 0644)
-
-	config, _ := config.LoadConfig()
-	db, _ := database.Connect()
-	db.Config.Logger = logger.Default.LogMode(logger.Silent)
-	database.Migrate(db)
-
-	t.Cleanup(func() {
-		tables, err := db.Migrator().GetTables()
-		if err == nil {
-			for _, table := range tables {
-				_ = db.Migrator().DropTable(table)
-			}
-		}
-
-		for _, env := range os.Environ() {
-			key := env[:strings.Index(env, "=")]
-			os.Unsetenv(key)
-		}
-	})
-
-	adapterFactory := manager.NewAdapterFactory(config, db)
-	adapterManager := manager.NewAdapterManager(adapterFactory, db)
-	runAdaptersErr := adapterManager.RunAdapters("DummyAdapter")
-
-	assert.NotNil(t, adapterManager)
-	assert.NoError(t, runAdaptersErr)
 }

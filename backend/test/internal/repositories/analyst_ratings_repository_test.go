@@ -5,6 +5,7 @@ import (
 	"backend/internal/models"
 	"backend/internal/repositories"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -18,24 +19,46 @@ func TestAnalystRatingsRepository(t *testing.T) {
 	db.Config.Logger = logger.Default.LogMode(logger.Silent)
 	migrationErr := database.Migrate(db)
 	dataSourceRepo := repositories.NewDataSourceRepository(db)
-
-	ratingRepo := repositories.NewAnalystRatingsRepository(db)
 	dataSource := models.DataSource{Name: "API-TEST"}
 	dataSourceRepoErr := dataSourceRepo.Create(&dataSource)
+	companyRepo := repositories.NewCompanyRepository(db)
+	company := models.Company{Name: "Company-TEST"}
+	_ = companyRepo.Create(&company)
+
+	ratingRepo := repositories.NewAnalystRatingsRepository(db)
 	rating := models.AnalystRating{
-		Ticker:       "AAPL",
 		TargetFrom:   120.5,
 		TargetTo:     130.0,
-		Company:      "Apple Inc.",
 		Action:       "Upgrade",
 		Brokerage:    "JP Morgan",
 		RatingFrom:   "Hold",
 		RatingTo:     "Buy",
 		RatedAt:      time.Now(),
 		DataSourceID: dataSource.ID,
+		CompanyID:    company.ID,
 	}
 	ratingRepoErr := ratingRepo.Create(&rating)
 	fetchedRating, fetchErr := ratingRepo.GetByID(rating.ID)
+
+	t.Cleanup(func() {
+		ratingRepo.Delete(rating.ID)
+		companyRepo.Delete(company.ID)
+		dataSourceRepo.Delete(dataSource.ID)
+
+		tables, err := db.Migrator().GetTables()
+		if err == nil {
+			for _, table := range tables {
+				_ = db.Migrator().DropTable(table)
+			}
+		}
+
+		for _, env := range os.Environ() {
+			key := env[:strings.Index(env, "=")]
+			os.Unsetenv(key)
+		}
+
+		os.Remove(".env")
+	})
 
 	assert.NoError(t, dbErr, "Database connection should not return an error")
 	assert.NotNil(t, db, "Database connection should not be nil")
@@ -44,10 +67,5 @@ func TestAnalystRatingsRepository(t *testing.T) {
 	assert.NoError(t, ratingRepoErr, "Should create rating history entry")
 	assert.NotZero(t, dataSource.ID, "DataSource ID should be set")
 	assert.NoError(t, fetchErr, "Should fetch rating history without error")
-	assert.Equal(t, "AAPL", fetchedRating.Ticker, "Fetched rating should match")
 	assert.Equal(t, dataSource.ID, fetchedRating.DataSourceID, "Should have correct foreign key")
-
-	dataSourceRepo.Delete(dataSource.ID)
-	db.Migrator().DropTable(&models.AnalystRating{}, &models.DataSource{}, &models.AdapterLog{}, &models.User{})
-	os.Unsetenv("DATABASE_URL")
 }

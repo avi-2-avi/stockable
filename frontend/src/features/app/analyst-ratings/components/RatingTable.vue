@@ -68,10 +68,10 @@
 
 <script setup lang="ts">
 import { ArrowUp, ArrowDown } from "lucide-vue-next";
-import Button from '@/components/Button.vue';
-import SelectDropdown from '@/components/SelectDropdown.vue';
-import Input from "@/components/Input.vue";
-import CPIBadge from '@/features/app/components/CPIBadge.vue';
+import Button from '@/components/ui/Button.vue';
+import SelectDropdown from '@/components/ui/SelectDropdown.vue';
+import Input from "@/components/ui/Input.vue";
+import CPIBadge from '@/components/ui/CPIBadge.vue';
 import { useRatingStore } from '@/store/ratingStore';
 import type { Rating } from '@/types/rating';
 import { formatNumberToCurrency, formatStringToDate, formatActionString, formatNumberToPercentage } from '@/utils/formater';

@@ -55,10 +55,8 @@ func (controller *AnalystRatingController) GetRatings(context *gin.Context) {
 
 		ratingDTOs = append(ratingDTOs, &dtos.AnalystRatingDTO{
 			ID:                       rating.ID,
-			Ticker:                   rating.Ticker,
 			TargetFrom:               rating.TargetFrom,
 			TargetTo:                 rating.TargetTo,
-			Company:                  rating.Company,
 			Action:                   rating.Action,
 			Brokerage:                rating.Brokerage,
 			RatingFrom:               rating.RatingFrom,

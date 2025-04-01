@@ -45,7 +45,9 @@ pnpm-debug.log*
 
 # CockroachDB-related
 */cockroach-data
+cockroach-data
 */ccloud
+ccloud
 
 # Terraform-related
 .terraform/

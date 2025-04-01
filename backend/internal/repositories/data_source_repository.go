@@ -19,6 +19,16 @@ func (r *DataSourceRepository) Create(dataSource *models.DataSource) error {
 	return r.db.Create(dataSource).Error
 }
 
+func (r *DataSourceRepository) GetAllAdapterNames() ([]string, error) {
+	var dataSources []models.DataSource
+	err := r.db.Find(&dataSources).Error
+	adapterNames := make([]string, len(dataSources))
+	for i, dataSource := range dataSources {
+		adapterNames[i] = dataSource.Name
+	}
+	return adapterNames, err
+}
+
 func (r *DataSourceRepository) GetAll() ([]models.DataSource, error) {
 	var dataSources []models.DataSource
 	err := r.db.Find(&dataSources).Error

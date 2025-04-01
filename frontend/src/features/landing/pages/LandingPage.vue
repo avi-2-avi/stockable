@@ -39,8 +39,8 @@
 import LandingLayout from '@/layouts/LandingLayout.vue';
 import FeatureSection from '@/features/landing/components/FeatureSection.vue';
 import { useRouter } from 'vue-router';
-import Button from '@/components/Button.vue';
-import Card from '@/components/Card.vue';
+import Button from '@/components/ui/Button.vue';
+import Card from '@/components/ui/Card.vue';
 
 const router = useRouter();
 
@@ -53,19 +53,19 @@ const featureDataList = [
         highlight: 'Unified',
         title: 'Market Intelligence',
         description: '📈 Stay ahead with aggregated data from leading financial platforms, all in one dashboard. No more switching between apps.',
-        image: 'src/assets/feature-1.svg',
+        image: 'src/assets/feature-1.webp',
     },
     {
         highlight: 'Expert-Driven',
         title: 'Recommendations',
         description: '🧠 Get AI-enhanced insights from top analysts across multiple sources—personalized to your investment style.',
-        image: 'src/assets/feature-2.svg',
+        image: 'src/assets/feature-2.webp',
     },
     {
         highlight: 'Data-Backed',
         title: 'Decisions, Simplified',
         description: '📊 Cut through the noise with trend analysis, risk assessment, and actionable takeaways—all visualized for easy understanding.',
-        image: 'src/assets/feature-3.svg',
+        image: 'src/assets/feature-3.webp',
     }
 ];
 

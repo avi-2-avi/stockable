@@ -16,6 +16,9 @@ type User struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	DeletedAt gorm.DeletedAt `gorm:"index"`
+
+	RoleID uint `gorm:"not null"`
+	Role   Role `gorm:"foreignKey:RoleID"`
 }
 
 func (u *User) HashPassword() error {

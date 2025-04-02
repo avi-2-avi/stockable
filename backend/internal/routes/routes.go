@@ -70,26 +70,6 @@ func RegisterUserRoutes(api *gin.RouterGroup, db *gorm.DB) {
 	registerUserRoute(api, "GET", "/ratings", ratingController.GetRatings)
 	registerUserRoute(api, "GET", "/ratings/indicators", ratingController.GetRatingsIndicators)
 	registerUserRoute(api, "GET", "/ratings/dashboard", ratingController.GetDashboardRatings)
-
-	// TODO: test the following
-	// portafolioRepo := repositories.NewPortafolioRepository(db)
-	// portafolioService := services.NewPortafolioService(portafolioRepo)
-	// portafolioController := controllers.NewPortafolioController(portafolioService)
-
-	// registerUserRoute(api, "GET", "/portfolio/:user_id", portafolioController.GetPortafolios)
-	// registerUserRoute(api, "PATCH", "/portfolio/:id", portafolioController.UpdatePortafolio)
-	// registerUserRoute(api, "DELETE", "/portfolio/:id", portafolioController.DeletePortafolio)
-	// registerUserRoute(api, "POST", "/portfolio", portafolioController.CreatePortafolio)
-	// registerUserRoute(api, "GET", "/portfolio/dashboard", portafolioController.GetDashboardPortafolios)
-
-	// portafolioHoldingRepo := repositories.NewPortafolioHoldingRepository(db)
-	// portafolioHoldingService := services.NewPortafolioHoldingService(portafolioHoldingRepo)
-	// portafolioHoldingController := controllers.NewPortafolioHoldingController(portafolioHoldingService)
-
-	// registerUserRoute(api, "GET", "/portfolio/:portafolio_id", portafolioHoldingController.GetPortafolioHoldings)
-	// registerUserRoute(api, "POST", "/portfolio/:portafolio_id", portafolioHoldingController.CreatePortafolioHolding)
-	// registerUserRoute(api, "PATCH", "/portfolio/:id", portafolioHoldingController.UpdatePortafolioHolding)
-	// registerUserRoute(api, "DELETE", "/portfolio/:id", portafolioHoldingController.DeletePortafolioHolding)
 }
 
 func registerUserRoute(api *gin.RouterGroup, method, route string, controllerFunc gin.HandlerFunc) {

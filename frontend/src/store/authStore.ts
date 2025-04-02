@@ -35,19 +35,20 @@ export const useAuthStore = defineStore(
         )
 
         user.value = response.data.body.user
-        router.push('/app/home')
+        router.push('/app/dashboard')
       } catch (error) {
         console.error('Login failed')
         throw new Error('Invalid credentials')
       }
     }
 
-    const register = async (fullName: string, email: string, password: string) => {
+    const register = async (fullName: string, email: string, password: string, role_name: string) => {
       try {
         await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
           full_name: fullName,
           email,
           password,
+          role_name,
         })
         await login(email, password)
       } catch (error) {

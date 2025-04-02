@@ -26,6 +26,7 @@ export const useIndicatorStore = defineStore('indicator', () => {
 
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/ratings/indicators?source_id=${sourceId}`,
+        { withCredentials: true }
       )
 
       if (response.status !== 200) {

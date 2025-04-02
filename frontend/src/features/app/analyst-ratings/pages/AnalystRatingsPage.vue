@@ -32,31 +32,31 @@ const showModal = ref(false);
 const ratingStore = useRatingStore();
 const { ratings } = storeToRefs(ratingStore);
 
-const indicatorStore = useIndicatorStore()
+const {cachedIndicators} = useIndicatorStore()
 const indicatorInformation = computed(() => [
   {
     title: "Buy Now Percentage",
-    value: indicatorStore.cachedIndicators
-      ? `${formatNumberToPercentage(indicatorStore.cachedIndicators.buy_now_percentage)}`
+    value: cachedIndicators
+      ? `${formatNumberToPercentage(cachedIndicators.buy_now_percentage)}`
       : "Loading...",
     description: "Percentage of ratings indicating a strong buy signal.",
     icon: CircleDollarSign
   },
   {
     title: "Positive Target Adjustment",
-    value: indicatorStore.cachedIndicators
-      ? `${formatNumberToPercentage(indicatorStore.cachedIndicators.positive_target_adjustment_percentage)}`
+    value: cachedIndicators
+      ? `${formatNumberToPercentage(cachedIndicators.positive_target_adjustment_percentage)}`
       : "Loading...",
     description: "Percentage of ratings with an increased target price.",
     icon: ChartNoAxesCombined
   },
   {
     title: "Highest Rating Increment",
-    value: indicatorStore.indicators
-      ? `${formatNumberToCurrency(indicatorStore.cachedIndicators.highest_increment_in_target_price)}`
+    value: cachedIndicators
+      ? `${formatNumberToCurrency(cachedIndicators.highest_increment_in_target_price)}`
       : "Loading...",
-    description: indicatorStore.cachedIndicators
-      ? `Highest $ increase stock: ${indicatorStore.cachedIndicators.highest_increment_in_target_price_name} (${indicatorStore.cachedIndicators.highest_increment_in_target_price_ticker})`
+    description: cachedIndicators
+      ? `Highest $ increase stock: ${cachedIndicators.highest_increment_in_target_price_name} (${cachedIndicators.highest_increment_in_target_price_ticker})`
       : "Loading...",
     icon: TrendingUp
   }

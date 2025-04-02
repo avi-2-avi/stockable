@@ -4,7 +4,7 @@
             {{ label }}
         </label>
         <div class="relative">
-            <input :type="type" :placeholder="placeholder" v-model="model" class="w-full px-2 py-2 border rounded-md focus:outline-none transition-all
+            <input :type="type" :placeholder="placeholder" v-model="model" class="w-full px-2 py-2 border text-foreground/80 rounded-md focus:outline-none transition-all
                 border-border focus:border-stock-300 focus:ring-1 focus:ring-stock-300"
                 :class="{ 'border-red-400': errorMessage }" />
             <p v-if="errorMessage" class="text-red-400 text-sm text-left mt-1">{{ errorMessage }}</p>

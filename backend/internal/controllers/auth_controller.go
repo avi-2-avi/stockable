@@ -23,7 +23,7 @@ type RegisterRequest struct {
 	FullName string `json:"full_name" binding:"required"`
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required,min=6"`
-	RoleName string `json:"role_name" binding:"required" default="user"`
+	RoleName string `json:"role_name" binding:"required"`
 }
 
 func (controller *AuthController) Register(context *gin.Context) {

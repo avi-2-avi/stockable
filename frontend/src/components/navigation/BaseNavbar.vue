@@ -10,7 +10,7 @@
     <div class="flex items-center space-x-4">
       <slot />
 
-      <button @click="toggleTheme" class="p-2 rounded transition text-foreground hidden sm:block">
+      <button @click="toggleTheme" class="p-2 rounded transition text-foreground hidden sm:block cursor-pointer">
         <Sun v-if="isDark" class="w-6 h-6" />
         <Moon v-else class="w-6 h-6" />
       </button>

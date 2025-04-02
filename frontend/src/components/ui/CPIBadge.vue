@@ -1,6 +1,5 @@
 <template>
-    <div class="px-2 py-1 min-w-[80px] text-sm font-bold text-center rounded-lg shadow"
-        :class="[badgeColor, textColor]">
+    <div :class="[badgeColor, textColor, sizeClass]" class="px-2 py-1 min-w-[80px] text-sm font-bold text-center rounded-lg shadow">
         {{ categoryLabel }}
     </div>
 </template>
@@ -8,7 +7,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-const props = defineProps<{ value: number }>();
+const props = defineProps<{ value: number; size?: 'normal' | 'small' }>();
 
 const categories = [
     { min: 90, label: "+ Strong Buy", color: "bg-green-700", text: "text-white" },
@@ -31,4 +30,8 @@ const categoryData = computed(() => {
 const categoryLabel = computed(() => categoryData.value.label);
 const badgeColor = computed(() => categoryData.value.color);
 const textColor = computed(() => categoryData.value.text);
+
+const sizeClass = computed(() => {
+    return props.size === 'small' ? 'text-xs py-0.5 px-0.5 min-w-[60px]' : 'text-sm py-1 px-2 min-w-[80px]';
+});
 </script>

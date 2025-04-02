@@ -8,18 +8,18 @@
           <p v-if="pageDescription" class="text-lg font-semibold opacity-70">{{ pageDescription }}</p>
         </div>
         <div class="flex space-x-5 items-center">
-          <div class="border rounded-lg pl-2.5 border-border flex w-[220px] items-center space-x-1">
-            <Database class="w-6 h-6 text-stock-500" />
-            <SelectDropdown dropdown-class="border-none rounded-full text-stock-500 font-semibold" id="source-select"
+          <div class="flex w-[200px] items-center space-x-1">
+            <SelectDropdown dropdown-class="text-stock-500 font-semibold" id="source-select"
               v-model="selectedSource" :options="sources" position="top" />
           </div>
-          <CircleHelp :onclik="openSourceHelp"
+          <CircleHelp @click="showModal = true"
             class="text-stock-500 hover:scale-110 transition-transform duration-200" />
         </div>
       </div>
       <slot />
     </div>
   </div>
+  <SourceModal v-if="showModal" @close="showModal = false" />
 </template>
 
 <script setup lang="ts">
@@ -27,8 +27,9 @@ import AppNavbar from '@/components/navigation/AppNavbar.vue';
 import SelectDropdown from '@/components/ui/SelectDropdown.vue'
 import { useSourceStore } from '@/store/sourceStore.ts'
 import { storeToRefs } from 'pinia'
-import { onMounted } from 'vue';
-import { CircleHelp, Database } from 'lucide-vue-next';
+import { onMounted, ref } from 'vue';
+import { CircleHelp } from 'lucide-vue-next';
+import SourceModal from '@/components/ui/SourceModal.vue';
 
 const sourceStore = useSourceStore();
 const { sources, selectedSource } = storeToRefs(sourceStore);
@@ -48,8 +49,6 @@ onMounted(() => {
   sourceStore.fetchSources();
 })
 
-const openSourceHelp = () => {
-  console.log('Open source help');
-}
+const showModal = ref(false);
 
 </script>

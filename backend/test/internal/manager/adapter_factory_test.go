@@ -56,7 +56,7 @@ func TestAdapterFactory_CreateAdapter(t *testing.T) {
 			return nil
 		}
 
-		analystService := services.NewAnalystRatingService(factory.GetAnalystRatingRepo())
+		analystService := services.NewAnalystRatingService(factory.GetAnalystRatingRepository())
 		companyService := services.NewCompanyService(factory.GetCompanyRepository())
 		return adapters.NewTruAdapter(
 			config.TruAdapterURL,

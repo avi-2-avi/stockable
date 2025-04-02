@@ -4,6 +4,7 @@ import (
 	"backend/internal/models"
 	"backend/internal/services"
 	"backend/internal/utils"
+	cpi "backend/internal/utils/cpi"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -118,12 +119,12 @@ func (truAdapter *TruAdapter) parseResponse(httpResponse *http.Response) ([]mode
 			RatedAt:                    parsedTime,
 			DataSourceID:               truAdapter.dataSourceID,
 			CompanyID:                  existingCompany.ID,
-			ActionImpactScore:          utils.CalculateActionImpactScore(item.Action),
-			RatingChangeImpact:         utils.CalculateRatingChangeImpact(item.RatingFrom, item.RatingTo),
-			TargetAdjustmentPercentage: utils.CalculateTargetAdjustment(targetFrom, targetTo),
+			ActionImpactScore:          cpi.CalculateActionImpactScore(item.Action),
+			RatingChangeImpact:         cpi.CalculateRatingChangeImpact(item.RatingFrom, item.RatingTo),
+			TargetAdjustmentPercentage: cpi.CalculateTargetAdjustment(targetFrom, targetTo),
 		}
 
-		rating.CombinedPredictionIndex = utils.CalculateRawCPI(rating.ActionImpactScore, rating.RatingChangeImpact, rating.TargetAdjustmentPercentage)
+		rating.CombinedPredictionIndex = cpi.CalculateRawCPI(rating.ActionImpactScore, rating.RatingChangeImpact, rating.TargetAdjustmentPercentage)
 
 		ratings = append(ratings, rating)
 	}

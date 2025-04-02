@@ -3,7 +3,7 @@ package adapters
 import (
 	"backend/internal/models"
 	"backend/internal/services"
-	"backend/internal/utils"
+	cpi "backend/internal/utils/cpi"
 	"math/rand"
 	"time"
 
@@ -72,13 +72,13 @@ func (dummyAdapter *DummyAdapter) FetchData() ([]models.AnalystRating, error) {
 			RatingFrom:                 ratingFrom,
 			RatingTo:                   ratingTo,
 			RatedAt:                    time.Now(),
-			ActionImpactScore:          utils.CalculateActionImpactScore("upgraded by"),
-			RatingChangeImpact:         utils.CalculateRatingChangeImpact(ratingFrom, ratingTo),
-			TargetAdjustmentPercentage: utils.CalculateTargetAdjustment(targetFrom, targetTo),
+			ActionImpactScore:          cpi.CalculateActionImpactScore("upgraded by"),
+			RatingChangeImpact:         cpi.CalculateRatingChangeImpact(ratingFrom, ratingTo),
+			TargetAdjustmentPercentage: cpi.CalculateTargetAdjustment(targetFrom, targetTo),
 			DataSourceID:               dummyAdapter.dataSourceID,
 			CompanyID:                  existingCompany.ID,
 		}
-		rating.CombinedPredictionIndex = utils.CalculateRawCPI(rating.ActionImpactScore, rating.RatingChangeImpact, rating.TargetAdjustmentPercentage)
+		rating.CombinedPredictionIndex = cpi.CalculateRawCPI(rating.ActionImpactScore, rating.RatingChangeImpact, rating.TargetAdjustmentPercentage)
 		ratings = append(ratings, rating)
 	}
 

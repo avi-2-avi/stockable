@@ -12,6 +12,7 @@ type AnalystRatingDTO struct {
 	TargetFrom               float64   `json:"target_from"`
 	TargetTo                 float64   `json:"target_to"`
 	Company                  string    `json:"company"`
+	CompanyID                string    `json:"company_id"`
 	Action                   string    `json:"action"`
 	Brokerage                string    `json:"brokerage"`
 	RatingFrom               string    `json:"rating_from"`
@@ -27,4 +28,15 @@ type AnalystRatingIndicatorsDTO struct {
 	HighestIncrementInTargetPrice       float64 `json:"highest_increment_in_target_price"`
 	HighestIncrementInTargetPriceTicker string  `json:"highest_increment_in_target_price_ticker"`
 	HighestIncrementInTargetPriceName   string  `json:"highest_increment_in_target_price_name"`
+}
+
+type AnalystRatingDashboardDTO struct {
+	LatestRatings    []AnalystRatingDTO `json:"latest_ratings"`
+	DonutCPIChart    []DonutChartDTO    `json:"donut_cpi_chart"`
+	DonutRatingChart []DonutChartDTO    `json:"donut_rating_chart"`
+}
+
+type DonutChartDTO struct {
+	Label string `json:"label" gorm:"column:rating_to"`
+	Count int    `json:"count" gorm:"column:count"`
 }

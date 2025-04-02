@@ -56,3 +56,14 @@ func (r *DataSourceRepository) GetByName(name string) (*models.DataSource, error
 func (r *DataSourceRepository) Delete(id uuid.UUID) error {
 	return r.db.Delete(&models.DataSource{}, id).Error
 }
+
+func (r *DataSourceRepository) Update(id uuid.UUID, isVisible bool) (*models.DataSource, error) {
+	var dataSource models.DataSource
+	err := r.db.First(&dataSource, id).Error
+	if err != nil {
+		return nil, err
+	}
+	dataSource.IsVisible = isVisible
+	err = r.db.Save(&dataSource).Error
+	return &dataSource, err
+}

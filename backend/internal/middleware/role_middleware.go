@@ -18,7 +18,7 @@ func RoleMiddleware(allowedRoleIDs ...uint) gin.HandlerFunc {
 
 		u, ok := user.(models.User)
 		if !ok {
-			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized - Invalid user data"})
 			c.Abort()
 			return
 		}
@@ -30,7 +30,7 @@ func RoleMiddleware(allowedRoleIDs ...uint) gin.HandlerFunc {
 			}
 		}
 
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		c.JSON(http.StatusForbidden, gin.H{"error": "Forbidden - Insufficient permissions"})
 		c.Abort()
 	}
 }

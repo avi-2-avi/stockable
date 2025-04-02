@@ -29,10 +29,26 @@ func (r *AuthRepository) GetUserByEmail(email string) (*models.User, error) {
 	return &user, err
 }
 
+func (r *AuthRepository) GetRoleByName(name string) (*models.Role, error) {
+	var role models.Role
+	err := r.db.Where("name = ?", name).First(&role).Error
+	return &role, err
+}
+
 func (r *AuthRepository) DeleteUser(id uuid.UUID) error {
-	return r.db.Delete(&models.User{}, id).Error
+	return r.db.Where("id = ?", id).Delete(&models.User{}).Error
 }
 
 func (r *AuthRepository) DeleteRole(id uint) error {
 	return r.db.Delete(&models.Role{}, id).Error
+}
+
+func (r *AuthRepository) UpdateUser(user *models.User) error {
+	return r.db.Model(&models.User{}).Where("id = ?", user.ID).Updates(user).Error
+}
+
+func (r *AuthRepository) ListUsers() ([]models.User, error) {
+	var users []models.User
+	err := r.db.Find(&users).Error
+	return users, err
 }

@@ -49,7 +49,7 @@ func (r *AnalystRatingRepository) GetAll(sortOrder, sortBy, sourceID string, fil
 	query = applySorting(query, sortBy, sortOrder)
 	query = applyPagination(query, page, limit)
 
-	err := query.Find(&ratings).Error
+	err := query.Preload("Company").Find(&ratings).Error
 	if err != nil {
 		return nil, 0, err
 	}
@@ -67,10 +67,8 @@ func cleanSortColumn(sortBy string) string {
 
 func allowedActionColumns() map[string]bool {
 	return map[string]bool{
-		"ticker":                       true,
 		"target_from":                  true,
 		"target_to":                    true,
-		"company":                      true,
 		"action":                       true,
 		"brokerage":                    true,
 		"rating_from":                  true,
@@ -96,7 +94,7 @@ func applyFilters(query *gorm.DB, sourceID string, filters map[string]string) *g
 		}
 	}
 
-	query = query.Where("rated_at = (SELECT MAX(rated_at) FROM analyst_ratings AS ar WHERE ar.ticker = analyst_ratings.ticker)")
+	query = query.Where("rated_at = (SELECT MAX(rated_at) FROM analyst_ratings AS ar WHERE ar.company_id = analyst_ratings.company_id)")
 
 	return query
 }
@@ -110,15 +108,21 @@ func applyPagination(query *gorm.DB, page, limit int) *gorm.DB {
 	return query.Limit(limit).Offset(offset)
 }
 
-func (r *AnalystRatingRepository) GetIndicators(sourceID string) (dtos.AnalystRatingIndicatorsDTO, error) {
+func (r *AnalystRatingRepository) GetTotalRatingsCount(sourceID string) (int64, error) {
+	var totalCount int64
+	query := r.db.Model(&models.AnalystRating{})
+	if sourceID != "" {
+		query = query.Where("data_source_id = ?", sourceID)
+	}
+	err := query.Count(&totalCount).Error
+	return totalCount, err
+}
+
+func (r *AnalystRatingRepository) CalculateIndicators(sourceID string, totalCount int64, minCPI, maxCPI float64) (dtos.AnalystRatingIndicatorsDTO, error) {
 	var dto dtos.AnalystRatingIndicatorsDTO
 
-	totalCount, err := r.getTotalRatingsCount(sourceID)
-	if err != nil || totalCount == 0 {
-		return dto, err
-	}
-
-	dto.BuyNowPercentage, err = r.getBuyNowPercentage(sourceID, totalCount)
+	var err error
+	dto.BuyNowPercentage, err = r.getBuyNowPercentage(sourceID, totalCount, minCPI, maxCPI)
 	if err != nil {
 		return dto, err
 	}
@@ -134,28 +138,13 @@ func (r *AnalystRatingRepository) GetIndicators(sourceID string) (dtos.AnalystRa
 	}
 
 	dto.HighestIncrementInTargetPrice = highestIncrementRating.TargetTo - highestIncrementRating.TargetFrom
-	// dto.HighestIncrementInTargetPriceTicker = highestIncrementRating.Ticker
-	// dto.HighestIncrementInTargetPriceName = highestIncrementRating.Company
+	dto.HighestIncrementInTargetPriceTicker = highestIncrementRating.Company.Ticker
+	dto.HighestIncrementInTargetPriceName = highestIncrementRating.Company.Name
 
 	return dto, nil
 }
 
-func (r *AnalystRatingRepository) getTotalRatingsCount(sourceID string) (int64, error) {
-	var totalCount int64
-	query := r.db.Model(&models.AnalystRating{})
-	if sourceID != "" {
-		query = query.Where("data_source_id = ?", sourceID)
-	}
-	err := query.Count(&totalCount).Error
-	return totalCount, err
-}
-
-func (r *AnalystRatingRepository) getBuyNowPercentage(sourceID string, totalCount int64) (float64, error) {
-	minCPI, maxCPI, err := r.GetMinMaxCPI()
-	if err != nil {
-		return 0, err
-	}
-
+func (r *AnalystRatingRepository) getBuyNowPercentage(sourceID string, totalCount int64, minCPI, maxCPI float64) (float64, error) {
 	if minCPI == maxCPI {
 		return 0, nil
 	}
@@ -169,7 +158,7 @@ func (r *AnalystRatingRepository) getBuyNowPercentage(sourceID string, totalCoun
 		query = query.Where("data_source_id = ?", sourceID)
 	}
 
-	err = query.Count(&buyNowCount).Error
+	err := query.Count(&buyNowCount).Error
 	if err != nil {
 		return 0, err
 	}
@@ -202,13 +191,14 @@ func (r *AnalystRatingRepository) getHighestIncrementInTargetPrice(sourceID stri
 		subQuery = subQuery.Where("data_source_id = ?", sourceID)
 	}
 
-	err := r.db.Where("id = (?)", subQuery).First(&rating).Error
+	err := r.db.Preload("Company").Where("id = (?)", subQuery).First(&rating).Error
 	if err != nil {
 		return models.AnalystRating{}, err
 	}
 
 	return rating, nil
 }
+
 func (r *AnalystRatingRepository) GetMinMaxCPI() (float64, float64, error) {
 	var result struct {
 		Min float64 `gorm:"column:min"`
@@ -225,16 +215,57 @@ func (r *AnalystRatingRepository) GetMinMaxCPI() (float64, float64, error) {
 	return result.Min, result.Max, nil
 }
 
-func (r *AnalystRatingRepository) GetRecommendations() ([]models.AnalystRating, error) {
-	// TODO: Change how to get recommendations
-	var ratings []models.AnalystRating
-	err := r.db.Where("action = ?", "Buy").Find(&ratings).Error
+func (r *AnalystRatingRepository) Delete(id uuid.UUID) error {
+	return r.db.Delete(&models.AnalystRating{}, id).Error
+}
+
+func (r *AnalystRatingRepository) GetLatestRatings(sourceID string) ([]models.AnalystRating, error) {
+	var latestRatings []models.AnalystRating
+
+	query := r.db.Model(&models.AnalystRating{}).Order("rated_at DESC").Limit(5)
+	if sourceID != "" {
+		query = query.Where("data_source_id = ?", sourceID)
+	}
+	err := query.Preload("Company").Find(&latestRatings).Error
 	if err != nil {
 		return nil, err
 	}
-	return ratings, nil
+
+	return latestRatings, nil
 }
 
-func (r *AnalystRatingRepository) Delete(id uuid.UUID) error {
-	return r.db.Delete(&models.AnalystRating{}, id).Error
+func (r *AnalystRatingRepository) GetDonutRatingChart(sourceID string) ([]dtos.DonutChartDTO, error) {
+	var donutChart []dtos.DonutChartDTO
+
+	query := r.db.Model(&models.AnalystRating{}).
+		Select("rating_to, COUNT(*) as count, MAX(rated_at) as latest_rated_at").
+		Group("rating_to").
+		Order("count DESC")
+	if sourceID != "" {
+		query = query.Where("data_source_id = ?", sourceID)
+	}
+
+	err := query.Scan(&donutChart).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return donutChart, nil
+}
+
+func (r *AnalystRatingRepository) GetRawCPIData(sourceID string) ([]models.AnalystRating, error) {
+	var ratings []models.AnalystRating
+
+	query := r.db.Model(&models.AnalystRating{}).Select("combined_prediction_index")
+	if sourceID != "" {
+		query = query.Where("data_source_id = ?", sourceID)
+	}
+	query = query.Order("combined_prediction_index")
+
+	err := query.Find(&ratings).Error
+	if err != nil {
+		return nil, err
+	}
+
+	return ratings, nil
 }

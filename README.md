@@ -1,6 +1,6 @@
 <p align="center">
   <a href="" rel="noopener">
-    <img width=400px height=100px src="./images/logo.webp" alt="Stockable logo">
+    <img width=400px height=100px src="./images/logo.svg" alt="Stockable logo">
   </a>
 </p>
 

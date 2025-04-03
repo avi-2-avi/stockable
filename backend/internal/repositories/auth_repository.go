@@ -44,6 +44,17 @@ func (r *AuthRepository) DeleteRole(id uint) error {
 }
 
 func (r *AuthRepository) UpdateUser(user *models.User) error {
+	var existingUser models.User
+	if err := r.db.First(&existingUser, "id = ?", user.ID).Error; err != nil {
+		return err
+	}
+
+	if user.Password != "" && user.Password != existingUser.Password {
+		if err := user.HashPassword(); err != nil {
+			return err
+		}
+	}
+
 	return r.db.Model(&models.User{}).Where("id = ?", user.ID).Updates(user).Error
 }
 

@@ -74,8 +74,10 @@ const toggleDropdown = () => {
 };
 
 const selectOption = (value: string) => {
-  emit('update:modelValue', value);
-  isOpen.value = false;
+  if (props.modelValue !== value) { 
+    isOpen.value = false;
+    emit('update:modelValue', value);
+  }
 };
 
 </script>

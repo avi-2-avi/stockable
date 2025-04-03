@@ -13,6 +13,8 @@
 </template>
 
 <script setup lang="ts">
+import { watch } from 'vue';
+
 
 defineProps({
     label: {
@@ -28,4 +30,9 @@ defineProps({
 });
 
 const model = defineModel<string>();
+const emit = defineEmits(["update:modelValue"]); 
+
+watch(model, (newValue) => {
+  emit("update:modelValue", newValue); 
+});
 </script>

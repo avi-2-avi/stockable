@@ -67,13 +67,15 @@ func cleanSortColumn(sortBy string) string {
 
 func allowedActionColumns() map[string]bool {
 	return map[string]bool{
+		"ticker":                       true,
+		"company":                      true,
 		"target_from":                  true,
 		"target_to":                    true,
 		"action":                       true,
 		"brokerage":                    true,
 		"rating_from":                  true,
 		"rating_to":                    true,
-		"created_at":                   true,
+		"rated_at":                     true,
 		"combined_prediction_index":    true,
 		"rating_increase_percentage":   true,
 		"action_impact_score":          true,
@@ -87,10 +89,22 @@ func applyFilters(query *gorm.DB, sourceID string, filters map[string]string) *g
 		query = query.Where("data_source_id = ?", sourceID)
 	}
 
-	allowedColumns := allowedActionColumns()
+	query = query.Joins("JOIN companies ON companies.id = analyst_ratings.company_id")
+
 	for column, value := range filters {
-		if _, exists := allowedColumns[column]; exists {
-			query = query.Where(fmt.Sprintf("%s LIKE ?", column), "%"+value+"%")
+		switch column {
+		case "ticker":
+			query = query.Where("companies.ticker ILIKE ?", "%"+value+"%")
+		case "company":
+			query = query.Where("companies.name ILIKE ?", "%"+value+"%")
+		case "rating_to":
+			query = query.Where("rating_to = ?", value)
+		case "target_from":
+			query = query.Where("target_from >= ?", value)
+		case "target_to":
+			query = query.Where("target_to <= ?", value)
+		case "action":
+			query = query.Where("action ILIKE ?", "%"+value+"%")
 		}
 	}
 
@@ -100,7 +114,18 @@ func applyFilters(query *gorm.DB, sourceID string, filters map[string]string) *g
 }
 
 func applySorting(query *gorm.DB, sortBy, sortOrder string) *gorm.DB {
-	return query.Order(fmt.Sprintf("%s %s", sortBy, sortOrder))
+	switch sortBy {
+	case "ticker":
+		return query.Order(fmt.Sprintf("companies.ticker %s", sortOrder))
+	case "company":
+		return query.Order(fmt.Sprintf("companies.name %s", sortOrder))
+	case "rating_increase_percentage":
+		return query.Order(fmt.Sprintf("(target_to - target_from) / NULLIF(target_from, 0) %s", sortOrder))
+	case "rated_at":
+		return query.Order(fmt.Sprintf("rated_at %s", sortOrder))
+	default:
+		return query.Order(fmt.Sprintf("%s %s", sortBy, sortOrder))
+	}
 }
 
 func applyPagination(query *gorm.DB, page, limit int) *gorm.DB {

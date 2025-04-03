@@ -15,8 +15,8 @@
 </template>
 
 <script setup lang="ts">
-import Modal from '@/components/Modal.vue';
-import Button from '@/components/Button.vue';
+import Modal from '@/components/ui/Modal.vue';
+import Button from '@/components/ui/Button.vue';
 
 defineProps<{ message: string }>();
 </script>

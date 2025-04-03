@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LandingPage from '../features/landing/pages/LandingPage.vue'
 import LoginPage from '../features/auth/pages/LoginPage.vue'
-import HomePage from '../features/app/home/pages/HomePage.vue'
-import HistoryPage from '../features/app/history/pages/HistoryPage.vue'
 import { useAuthStore } from '@/store/authStore'
+import DashboardPage from '@/features/app/dashboard/pages/DashboardPage.vue'
+import AnalystRatingsPage from '@/features/app/analyst-ratings/pages/AnalystRatingsPage.vue'
 
 export const routes = [
   {
@@ -19,15 +19,15 @@ export const routes = [
     meta: { requiresAuth: false },
   },
   {
-    path: '/app/home',
-    name: 'Home',
-    component: HomePage,
+    path: '/app/dashboard',
+    name: 'Dashboard',
+    component: DashboardPage,
     meta: { requiresAuth: true },
   },
   {
-    path: '/app/history',
-    name: 'History',
-    component: HistoryPage,
+    path: '/app/analyst-ratings',
+    name: 'AnalystRatings',
+    component: AnalystRatingsPage,
     meta: { requiresAuth: true },
   },
   {
@@ -47,7 +47,7 @@ router.beforeEach((to, _, next) => {
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/auth')
   } else if (to.path === '/auth' && authStore.isAuthenticated) {
-    next('/app/home')
+    next('/app/dashboard')
   } else {
     next()
   }

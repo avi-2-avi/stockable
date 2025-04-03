@@ -1,11 +1,10 @@
 package routes
 
 import (
-	"backend/config"
 	"backend/internal/controllers"
+	"backend/internal/middleware"
 	"backend/internal/repositories"
 	"backend/internal/services"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -23,10 +22,16 @@ func SetupRouter() *gin.Engine {
 }
 
 func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
-	router.Use(CORSMiddleware())
+	router.Use(middleware.CORSMiddleware())
 
 	api := router.Group("/api")
 
+	RegisterNoAuthRoutes(api, db)
+	RegisterAdminRoutes(api, db)
+	RegisterUserRoutes(api, db)
+}
+
+func RegisterNoAuthRoutes(api *gin.RouterGroup, db *gorm.DB) {
 	authRepo := repositories.NewAuthRepository(db)
 	authService := services.NewAuthService(authRepo)
 	authController := controllers.NewAuthController(authService)
@@ -34,53 +39,39 @@ func RegisterRoutes(router *gin.Engine, db *gorm.DB) {
 	api.POST("/auth/register", authController.Register)
 	api.POST("/auth/login", authController.Login)
 	api.POST("/auth/logout", authController.Logout)
+}
 
+func RegisterAdminRoutes(api *gin.RouterGroup, db *gorm.DB) {
+	authRepo := repositories.NewAuthRepository(db)
+	authService := services.NewAuthService(authRepo)
+	authController := controllers.NewAuthController(authService)
+
+	registerAdminRoute(api, "GET", "/auth/list", authController.List)
+	registerAdminRoute(api, "PATCH", "/auth/update/:id", authController.Update)
+	registerAdminRoute(api, "DELETE", "/auth/delete/:id", authController.Delete)
+}
+
+func registerAdminRoute(api *gin.RouterGroup, method, route string, controllerFunc gin.HandlerFunc) {
+	api.Handle(method, route, middleware.AuthMiddleware(), middleware.RoleMiddleware(1), controllerFunc)
+}
+
+func RegisterUserRoutes(api *gin.RouterGroup, db *gorm.DB) {
 	sourceRepo := repositories.NewDataSourceRepository(db)
 	sourceService := services.NewDataSourceService(sourceRepo)
 	sourceController := controllers.NewDataSourceController(sourceService)
 
-	api.GET("/sources", sourceController.GetSources)
+	registerUserRoute(api, "GET", "/sources", sourceController.GetSources)
+	registerUserRoute(api, "PATCH", "/sources/:id", sourceController.UpdateSource)
 
-	ratingRepo := repositories.NewAnalystRatingsRepository(db)
-	ratingService := services.NewAnalystRatingsService(ratingRepo)
+	ratingRepo := repositories.NewAnalystRatingRepository(db)
+	ratingService := services.NewAnalystRatingService(ratingRepo)
 	ratingController := controllers.NewAnalystRatingController(ratingService)
 
-	api.GET("/ratings", ratingController.GetRatings)
-	api.GET("/ratings/indicators", ratingController.GetRatingsIndicators)
+	registerUserRoute(api, "GET", "/ratings", ratingController.GetRatings)
+	registerUserRoute(api, "GET", "/ratings/indicators", ratingController.GetRatingsIndicators)
+	registerUserRoute(api, "GET", "/ratings/dashboard", ratingController.GetDashboardRatings)
 }
 
-func CORSMiddleware() gin.HandlerFunc {
-	config, err := config.LoadConfig()
-	if err != nil {
-		fmt.Println("Failed to load configuration")
-	}
-
-	allowedOrigins := map[string]bool{
-		"http://localhost:5173":        true,
-		"http://stockable-frontend":    true,
-		"http://stockable-frontend:80": true,
-	}
-
-	if config.AllowedOrigin != "" {
-		allowedOrigins[config.AllowedOrigin] = true
-	}
-
-	return func(context *gin.Context) {
-		origin := context.Request.Header.Get("Origin")
-
-		if allowedOrigins[origin] {
-			context.Writer.Header().Set("Access-Control-Allow-Origin", origin)
-			context.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-		}
-
-		context.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS")
-		context.Writer.Header().Set("Access-Control-Allow-Headers", "Origin, Content-Type, Authorization")
-
-		if context.Request.Method == http.MethodOptions {
-			context.AbortWithStatus(http.StatusNoContent)
-			return
-		}
-
-		context.Next()
-	}
+func registerUserRoute(api *gin.RouterGroup, method, route string, controllerFunc gin.HandlerFunc) {
+	api.Handle(method, route, middleware.AuthMiddleware(), middleware.RoleMiddleware(1, 2), controllerFunc)
 }

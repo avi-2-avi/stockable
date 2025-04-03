@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"backend/internal/dtos"
 	"backend/internal/services"
 	"backend/internal/utils"
 	"net/http"
@@ -11,10 +10,10 @@ import (
 )
 
 type AnalystRatingController struct {
-	RatingService services.AnalystRatingsService
+	RatingService services.AnalystRatingService
 }
 
-func NewAnalystRatingController(ratingService services.AnalystRatingsService) *AnalystRatingController {
+func NewAnalystRatingController(ratingService services.AnalystRatingService) *AnalystRatingController {
 	return &AnalystRatingController{
 		RatingService: ratingService,
 	}
@@ -23,50 +22,13 @@ func NewAnalystRatingController(ratingService services.AnalystRatingsService) *A
 func (controller *AnalystRatingController) GetRatings(context *gin.Context) {
 	sortBy, sortOrder, sourceID, pageNumber, limitNumber, filters := parseQueryParams(context)
 
-	ratings, total, err := controller.RatingService.GetAll(sortOrder, sortBy, sourceID, filters, pageNumber, limitNumber)
+	ratingsDTOs, total, err := controller.RatingService.GetAll(sortOrder, sortBy, sourceID, filters, pageNumber, limitNumber)
 	if err != nil {
 		utils.Respond(context, utils.APIResponse{
 			Status:  http.StatusInternalServerError,
 			Message: "Failed to get ratings",
 		})
 		return
-	}
-
-	minCPI, maxCPI, err := controller.RatingService.GetMinMaxCPI()
-	if err != nil {
-		utils.Respond(context, utils.APIResponse{
-			Status:  http.StatusInternalServerError,
-			Message: "Failed to get CPI normalization data",
-		})
-		return
-	}
-
-	if minCPI == maxCPI {
-		maxCPI += 0.1
-	}
-
-	normalizeCPI := func(rawCPI float64) float64 {
-		return ((rawCPI - minCPI) / (maxCPI - minCPI)) * 100
-	}
-
-	var ratingDTOs []*dtos.AnalystRatingDTO
-	for _, rating := range ratings {
-		normalizedCPI := normalizeCPI(rating.CombinedPredictionIndex)
-
-		ratingDTOs = append(ratingDTOs, &dtos.AnalystRatingDTO{
-			ID:                       rating.ID,
-			Ticker:                   rating.Ticker,
-			TargetFrom:               rating.TargetFrom,
-			TargetTo:                 rating.TargetTo,
-			Company:                  rating.Company,
-			Action:                   rating.Action,
-			Brokerage:                rating.Brokerage,
-			RatingFrom:               rating.RatingFrom,
-			RatingTo:                 rating.RatingTo,
-			RatedAt:                  rating.RatedAt,
-			RatingIncreasePercentage: (rating.TargetTo - rating.TargetFrom) / rating.TargetFrom * 100,
-			CombinedPredictionIndex:  normalizedCPI,
-		})
 	}
 
 	utils.Respond(context, utils.APIResponse{
@@ -76,7 +38,7 @@ func (controller *AnalystRatingController) GetRatings(context *gin.Context) {
 			"page":    pageNumber,
 			"limit":   limitNumber,
 			"total":   total,
-			"ratings": ratingDTOs,
+			"ratings": ratingsDTOs,
 		},
 	})
 }
@@ -120,20 +82,6 @@ func extractFilters(context *gin.Context) map[string]string {
 	return filters
 }
 
-func (controller *AnalystRatingController) GetRecommendations(context *gin.Context) {
-	recommendations, err := controller.RatingService.GetRecommendations()
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Failed to get recommendations",
-		})
-		return
-	}
-
-	context.JSON(http.StatusOK, gin.H{
-		"recommendations": recommendations,
-	})
-}
-
 func (controller *AnalystRatingController) GetRatingsIndicators(context *gin.Context) {
 	sourceID := context.Query("source_id")
 	indicators, err := controller.RatingService.GetIndicators(sourceID)
@@ -152,4 +100,25 @@ func (controller *AnalystRatingController) GetRatingsIndicators(context *gin.Con
 			"indicators": indicators,
 		},
 	})
+}
+
+func (controller *AnalystRatingController) GetDashboardRatings(context *gin.Context) {
+	sourceID := context.Query("source_id")
+	dashboardData, err := controller.RatingService.GetDashboardRatings(sourceID)
+	if err != nil {
+		utils.Respond(context, utils.APIResponse{
+			Status:  http.StatusInternalServerError,
+			Message: "Failed to get ratings",
+		})
+		return
+	}
+
+	utils.Respond(context, utils.APIResponse{
+		Status:  http.StatusOK,
+		Message: "Success",
+		Body: gin.H{
+			"data": dashboardData,
+		},
+	})
+
 }

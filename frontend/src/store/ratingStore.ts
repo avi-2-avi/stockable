@@ -19,16 +19,6 @@ export const useRatingStore = defineStore('rating', () => {
   const sourceStore = useSourceStore()
   const selectedSource = computed(() => sourceStore.selectedSource)
 
-  watch(
-    selectedSource,
-    (newSource) => {
-      if (newSource) {
-        fetchRatings()
-      }
-    },
-    { immediate: true },
-  )
-
   const fetchRatings = async () => {
     if (!selectedSource.value) {
       console.warn('No source selected. Skipping fetchRatings.')
@@ -48,6 +38,7 @@ export const useRatingStore = defineStore('rating', () => {
           sort_order: sortOrder.value,
           ...filters.value,
         },
+        withCredentials: true
       })
       ratings.value = response.data.body.ratings
       totalRatings.value = response.data.body.total
@@ -58,6 +49,16 @@ export const useRatingStore = defineStore('rating', () => {
       loading.value = false
     }
   }
+
+  watch(
+    selectedSource,
+    (newSource) => {
+      if (newSource) {
+        fetchRatings()
+      }
+    },
+    { immediate: true },
+  )
 
   const setSorting = (column: string, order: 'asc' | 'desc') => {
     sortBy.value = column

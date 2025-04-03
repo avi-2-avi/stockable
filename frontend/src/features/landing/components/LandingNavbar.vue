@@ -5,8 +5,8 @@
 </template>
 
 <script setup lang="ts">
-import BaseNavbar from '@/components/BaseNavbar.vue'
-import Button from '@/components/Button.vue'
+import BaseNavbar from '@/components/navigation/BaseNavbar.vue'
+import Button from '@/components/ui/Button.vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()

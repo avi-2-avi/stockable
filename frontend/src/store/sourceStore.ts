@@ -3,6 +3,7 @@ import type { Option } from '@/types/option.ts'
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useIndicatorStore } from './indicatorStore'
+import { useDashboardStore } from './dashboardStore'
 
 interface SourceResponse {
   id: string
@@ -13,10 +14,13 @@ export const useSourceStore = defineStore('source', () => {
   const sources = ref<Option[]>([])
   const selectedSource = ref<string>('')
   const indicatorStore = useIndicatorStore()
+  const ratingStore = useDashboardStore()
 
   const fetchSources = async () => {
     try {
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/sources`)
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/sources`, {
+        withCredentials: true 
+      })
 
       if (response.status !== 200) {
         throw new Error('Failed to fetch sources')
@@ -40,11 +44,13 @@ export const useSourceStore = defineStore('source', () => {
   const setSelectedSource = (source_id: string) => {
     selectedSource.value = source_id
     indicatorStore.fetchIndicators(source_id)
+    ratingStore.fetchDashboardRatings(source_id)
   }
 
   watch(selectedSource, async (newSource) => {
     if (newSource) {
       await indicatorStore.fetchIndicators(newSource)
+      await ratingStore.fetchDashboardRatings(newSource)
     }
   })
 

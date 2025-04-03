@@ -2,8 +2,10 @@ package main
 
 import (
 	"backend/config"
+	"backend/internal/adapters"
 	"backend/internal/database"
 	"backend/internal/manager"
+	"backend/internal/services"
 	"flag"
 	"fmt"
 )
@@ -33,8 +35,38 @@ func main() {
 	flag.Parse()
 
 	adapterFactory := manager.NewAdapterFactory(config, db)
+
+	dummySource := adapterFactory.CreateDataSource("DummyAdapter", false)
+
+	adapterFactory.RegisterAdapter("DummyAdapter", func(factory *manager.AdapterFactory) adapters.RatingAdapter {
+		analystService := services.NewAnalystRatingService(factory.GetAnalystRatingRepository())
+		companyService := services.NewCompanyService(factory.GetCompanyRepository())
+		return adapters.NewDummyAdapter(analystService, companyService, dummySource.ID)
+	})
+
+	truSource := adapterFactory.CreateDataSource("TruAdapter", true)
+
+	adapterFactory.RegisterAdapter("TruAdapter", func(factory *manager.AdapterFactory) adapters.RatingAdapter {
+		fmt.Println("Creating TruAdapter")
+		if truSource == nil {
+			return nil
+		}
+
+		analystService := services.NewAnalystRatingService(factory.GetAnalystRatingRepository())
+		companyService := services.NewCompanyService(factory.GetCompanyRepository())
+		return adapters.NewTruAdapter(
+			config.TruAdapterURL,
+			config.TruAdapterToken,
+			analystService,
+			companyService,
+			truSource.ID,
+		)
+	})
+
 	adapterManager := manager.NewAdapterManager(adapterFactory, db)
+
 	err = adapterManager.RunAdapters(*adapterName)
+
 	if err != nil {
 		fmt.Println("Error running adapters:", err)
 	}

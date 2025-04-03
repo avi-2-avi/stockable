@@ -45,8 +45,9 @@ func TestTruAdapter_FetchData(t *testing.T) {
 
 	repositories.NewAdapterLogRepository(db)
 	dataSourceRepo := repositories.NewDataSourceRepository(db)
-	analystRatingsRepo := repositories.NewAnalystRatingsRepository(db)
-	analystRatingsService := services.NewAnalystRatingsService(analystRatingsRepo)
+	analystRatingRepo := repositories.NewAnalystRatingRepository(db)
+	analystRatingService := services.NewAnalystRatingService(analystRatingRepo)
+	companyService := services.NewCompanyService(repositories.NewCompanyRepository(db))
 
 	dataSource := models.DataSource{Name: "Tru"}
 	dataSourceRepoErr := dataSourceRepo.Create(&dataSource)
@@ -71,7 +72,7 @@ func TestTruAdapter_FetchData(t *testing.T) {
 	}))
 	defer mockServer.Close()
 
-	adapter := adapters.NewTruAdapter(mockServer.URL, mockToken, analystRatingsService, dataSource.ID)
+	adapter := adapters.NewTruAdapter(mockServer.URL, mockToken, analystRatingService, companyService, dataSource.ID)
 
 	_, adapterErr := adapter.FetchData()
 

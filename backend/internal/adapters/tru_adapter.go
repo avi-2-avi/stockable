@@ -4,6 +4,7 @@ import (
 	"backend/internal/models"
 	"backend/internal/services"
 	"backend/internal/utils"
+	cpi "backend/internal/utils/cpi"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -13,18 +14,20 @@ import (
 )
 
 type TruAdapter struct {
-	apiURL       string
-	token        string
-	service      services.AnalystRatingsService
-	dataSourceID uuid.UUID
+	apiURL         string
+	token          string
+	ratingService  services.AnalystRatingService
+	companyService services.CompanyService
+	dataSourceID   uuid.UUID
 }
 
-func NewTruAdapter(apiURL string, token string, service services.AnalystRatingsService, dataSourceID uuid.UUID) RatingAdapter {
+func NewTruAdapter(apiURL string, token string, ratingService services.AnalystRatingService, companyService services.CompanyService, dataSourceID uuid.UUID) RatingAdapter {
 	return &TruAdapter{
-		apiURL:       apiURL,
-		token:        token,
-		service:      service,
-		dataSourceID: dataSourceID,
+		apiURL:         apiURL,
+		token:          token,
+		ratingService:  ratingService,
+		companyService: companyService,
+		dataSourceID:   dataSourceID,
 	}
 }
 
@@ -32,12 +35,8 @@ func (truAdapter *TruAdapter) FetchData() ([]models.AnalystRating, error) {
 	var allRatings []models.AnalystRating
 	nextPage := ""
 
-	// Temporal counter
-	// count := 0
-
 	for {
 		url := truAdapter.buildUrl(nextPage)
-		println("URL: ", url)
 
 		response, err := truAdapter.callAPI(url)
 		if err != nil {
@@ -45,7 +44,6 @@ func (truAdapter *TruAdapter) FetchData() ([]models.AnalystRating, error) {
 		}
 
 		ratings, newNextPage, err := truAdapter.parseResponse(response)
-		println("Ratings: ", ratings)
 		if err != nil {
 			return nil, err
 		}
@@ -55,16 +53,9 @@ func (truAdapter *TruAdapter) FetchData() ([]models.AnalystRating, error) {
 			break
 		}
 		nextPage = newNextPage
-
-		// Testing if the loop is working
-
-		// count++
-		// if count > 10 {
-		// 	break
-		// }
 	}
 
-	err := truAdapter.service.SaveAnalystRatingsBatch(allRatings)
+	err := truAdapter.ratingService.SaveAnalystRatingsBatch(allRatings)
 	if err != nil {
 		return nil, err
 	}
@@ -110,26 +101,30 @@ func (truAdapter *TruAdapter) parseResponse(httpResponse *http.Response) ([]mode
 	for _, item := range response.Items {
 		parsedTime, _ := time.Parse(time.RFC3339, item.Time)
 
+		existingCompany, err := truAdapter.companyService.CreateCompanyByTicker(item.Ticker, item.Company)
+		if err != nil {
+			return nil, "", err
+		}
+
 		targetFrom := utils.ParsePrice(item.TargetFrom)
 		targetTo := utils.ParsePrice(item.TargetTo)
 
 		rating := models.AnalystRating{
-			Ticker:                     item.Ticker,
 			TargetFrom:                 targetFrom,
 			TargetTo:                   targetTo,
-			Company:                    item.Company,
 			Action:                     item.Action,
 			Brokerage:                  item.Brokerage,
 			RatingFrom:                 item.RatingFrom,
 			RatingTo:                   item.RatingTo,
 			RatedAt:                    parsedTime,
 			DataSourceID:               truAdapter.dataSourceID,
-			ActionImpactScore:          utils.CalculateActionImpactScore(item.Action),
-			RatingChangeImpact:         utils.CalculateRatingChangeImpact(item.RatingFrom, item.RatingTo),
-			TargetAdjustmentPercentage: utils.CalculateTargetAdjustment(targetFrom, targetTo),
+			CompanyID:                  existingCompany.ID,
+			ActionImpactScore:          cpi.CalculateActionImpactScore(item.Action),
+			RatingChangeImpact:         cpi.CalculateRatingChangeImpact(item.RatingFrom, item.RatingTo),
+			TargetAdjustmentPercentage: cpi.CalculateTargetAdjustment(targetFrom, targetTo),
 		}
 
-		rating.CombinedPredictionIndex = utils.CalculateRawCPI(rating.ActionImpactScore, rating.RatingChangeImpact, rating.TargetAdjustmentPercentage)
+		rating.CombinedPredictionIndex = cpi.CalculateRawCPI(rating.ActionImpactScore, rating.RatingChangeImpact, rating.TargetAdjustmentPercentage)
 
 		ratings = append(ratings, rating)
 	}

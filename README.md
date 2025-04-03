@@ -1,6 +1,6 @@
 <p align="center">
   <a href="" rel="noopener">
-    <img width=400px height=100px src="./images/logo.svg" alt="Stockable logo">
+    <img width=400px height=100px src="./images/logo.webp" alt="Stockable logo">
   </a>
 </p>
 
@@ -64,8 +64,14 @@ For other platforms, check [CockroachDB Installation Guide](https://www.cockroac
    git clone https://github.com/avi-2-avi/stockable.git
    cd stockable
    ```
+2. Database setup:
+  - Make sure to start running your cockroach database locally or in the cloud.
+  - To run locally cockroach:
+   ```bash 
+      cockroach start-single-node --advertise-addr 'localhost' --insecure
+   ```
 
-2. **Backend Setup:**
+3. **Backend Setup:**
    - Navigate to the backend directory:
      ```bash
      cd backend
@@ -80,7 +86,7 @@ For other platforms, check [CockroachDB Installation Guide](https://www.cockroac
      go run cmd/server/main.go
      ```
 
-3. **Frontend Setup:**
+4. **Frontend Setup:**
    - Navigate to the frontend directory:
      ```bash
      cd frontend
@@ -122,6 +128,15 @@ pnpm test:unit
 - **Filtering & Sorting**: Customize recommendations based on various indicators.
 
 ## 🚀 Deployment <a name = "deployment"></a>
+
+### Prerequisites
+
+Ensure you have the following installed:
+
+- **AWS CLI** `2.11.11` or later
+- **Terraform** `1.7.0` or later
+
+Additionally, you will require a cockroach database in the cloud. You can populate it locally using the `go run cmd/loader/main.go` command.
 
 ### Move to the Terraform Directory
 Navigate to the `terraform` directory in your project:

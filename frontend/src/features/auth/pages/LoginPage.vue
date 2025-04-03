@@ -41,9 +41,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import AuthLayout from '@/layouts/AuthLayout.vue';
-import Card from '@/components/Card.vue';
-import Button from '@/components/Button.vue';
-import BaseInput from '@/components/Input.vue';
+import Card from '@/components/ui/Card.vue';
+import Button from '@/components/ui/Button.vue';
+import BaseInput from '@/components/ui/Input.vue';
 import AuthModal from '../components/AuthModal.vue';
 import { validateAuthForm } from '@/utils/validation.ts';
 import { useAuthStore } from '@/store/authStore';
@@ -72,7 +72,7 @@ const handleSubmit = async () => {
     isLoading.value = true; 
     try {
         if (isSignup.value) {
-            await authStore.register(form.value.fullName, form.value.email, form.value.password);
+            await authStore.register(form.value.fullName, form.value.email, form.value.password, 'user');
         } else {
             await authStore.login(form.value.email, form.value.password);
         }

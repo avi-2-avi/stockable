@@ -5,6 +5,7 @@ import (
 	"backend/internal/models"
 	"backend/internal/repositories"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -22,6 +23,24 @@ func TestDataSourceRepository(t *testing.T) {
 	repoErr := dataSourceRepo.Create(&dataSource)
 	fetchedSource, fetchErr := dataSourceRepo.GetByID(dataSource.ID)
 
+	t.Cleanup(func() {
+		dataSourceRepo.Delete(dataSource.ID)
+
+		tables, err := db.Migrator().GetTables()
+		if err == nil {
+			for _, table := range tables {
+				_ = db.Migrator().DropTable(table)
+			}
+		}
+
+		for _, env := range os.Environ() {
+			key := env[:strings.Index(env, "=")]
+			os.Unsetenv(key)
+		}
+
+		os.Remove(".env")
+	})
+
 	assert.NoError(t, dbErr, "Database connection should not return an error")
 	assert.NotNil(t, db, "Database connection should not be nil")
 	assert.NoError(t, migrationErr, "Database migration should not return an error")
@@ -29,8 +48,4 @@ func TestDataSourceRepository(t *testing.T) {
 	assert.NotZero(t, dataSource.ID, "DataSource ID should be set")
 	assert.NoError(t, fetchErr, "Should fetch data source without error")
 	assert.Equal(t, "API-TEST", fetchedSource.Name, "Fetched data source should match")
-
-	dataSourceRepo.Delete(dataSource.ID)
-	db.Migrator().DropTable(&models.AnalystRating{}, &models.DataSource{}, &models.AdapterLog{}, &models.User{})
-	os.Unsetenv("DATABASE_URL")
 }

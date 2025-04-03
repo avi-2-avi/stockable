@@ -18,6 +18,6 @@ sudo -u ec2-user git clone https://github.com/avi-2-avi/stockable.git /home/ec2-
 chown -R ec2-user:ec2-user /home/ec2-user/stockable
 
 cd /home/ec2-user/stockable
-sudo -u ec2-user git checkout feat/deploy-v2
+sudo -u ec2-user git checkout main
 
 aws s3 cp s3://stockable-env-files/backend.env /home/ec2-user/stockable/backend/.env

@@ -21,14 +21,8 @@
             <div class="col-span-6 lg:col-span-2 lg:row-start-2 lg:row-span-1 ">
                 <DonutChartCard title="Ratings Breakdown" :chartData="cachedDashboardRatings.donut_rating_chart" />
             </div>
-            <div class="col-span-6 lg:col-span-2 lg:row-start-3 row-span-1">
-                <NewsCard :title="news[0].title" :description="news[0].description" :image="news[0].image" :link="news[0].link" />
-            </div>
-            <div class="col-span-6 lg:col-span-2 lg:row-start-3 row-span-1">
-                <NewsCard :title="news[1].title" :description="news[1].description" :image="news[1].image" :link="news[1].link" />
-            </div>
-            <div class="col-span-6 lg:col-span-2 lg:row-start-3 row-span-1">
-                <NewsCard :title="news[2].title" :description="news[2].description" :image="news[2].image" :link="news[2].link" />
+            <div class="col-span-6 lg:col-span-2" v-for="(news, index) in news" :key="index">
+                <NewsCard :title="news.title" :description="news.description" :image="news.image" :link="news.link" />
             </div>
         </div>
     </AppLayout>

@@ -129,6 +129,15 @@ pnpm test:unit
 
 ## 🚀 Deployment <a name = "deployment"></a>
 
+### Prerequisites
+
+Ensure you have the following installed:
+
+- **AWS CLI** `2.11.11` or later
+- **Terraform** `1.7.0` or later
+
+Additionally, you will require a cockroach database in the cloud. You can populate it locally using the `go run cmd/loader/main.go` command.
+
 ### Move to the Terraform Directory
 Navigate to the `terraform` directory in your project:
 ```bash

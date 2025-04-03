@@ -86,12 +86,5 @@
 <script setup lang="ts">
 import Button from '@/components/ui/Button.vue';
 defineEmits(["close"]);
-const rciMatrix = [
-    { label: "Strong-Buy", values: [4, 3, -2, -4, -1, -2] },
-    { label: "Buy / Overweight", values: [3, 3, -2, -3, -1, -1] },
-    { label: "Neutral / Hold", values: [2, 2, 0.5, -1, 1, 1] },
-    { label: "Sell / Underperform", values: [4, 3, 1, -1, 1.5, 2] },
-    { label: "Sector Perform", values: [2, 2, -1, -2, 2, 1.5] },
-    { label: "Market Perform", values: [3, 2, -1, -2, 1.5, 2] },
-];
+import { rciMatrix } from '@/data/rci_matrix';
 </script>

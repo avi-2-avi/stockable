@@ -21,23 +21,25 @@ func CalculateActionImpactScore(action string) float64 {
 
 func CalculateRatingChangeImpact(from string, to string) float64 {
 	ratingImpact := map[string]float64{
-		"Outperform":   4,
-		"Strong-Buy":   4,
-		"Buy":          3,
-		"Overweight":   3,
-		"Neutral":      1,
-		"Hold":         1,
-		"Equal Weight": 1,
-		"Sell":         -1,
-		"Underperform": -1,
-		"Underweight":  -1,
+		"Outperform":     4,
+		"Strong-Buy":     4,
+		"Buy":            3,
+		"Overweight":     3,
+		"Neutral":        1,
+		"Hold":           1,
+		"Equal Weight":   1,
+		"Sell":           -1,
+		"Underperform":   -1,
+		"Underweight":    -1,
+		"Market Perform": 2,
+		"Sector Perform": 2,
 	}
 
 	if from == to {
 		return ratingImpact[from]
 	}
 
-	if from == "Neutral" || from == "Hold" || from == "Equal Weight" {
+	if from == "Neutral" || from == "Hold" || from == "Equal Weight" || from == "Sector Perform" || from == "Market Perform" {
 		if to == "Strong-Buy" || to == "Buy" || to == "Outperform" || to == "Overweight" {
 			return 2
 		}
@@ -47,12 +49,12 @@ func CalculateRatingChangeImpact(from string, to string) float64 {
 			return 3
 		}
 	}
-	if from == "Strong-Buy" || from == "Buy" || from == "Outperform" || from == "Overweight" {
+	if from == "Strong-Buy" || from == "Buy" || from == "Outperform" || from == "Overweight" || from == "Market Perform" || from == "Sector Perform" {
 		if to == "Neutral" || to == "Hold" || to == "Equal Weight" {
 			return -2
 		}
 	}
-	if from == "Strong-Buy" || from == "Buy" || from == "Outperform" || from == "Overweight" {
+	if from == "Strong-Buy" || from == "Buy" || from == "Outperform" || from == "Overweight" || from == "Market Perform" || from == "Sector Perform" {
 		if to == "Sell" || to == "Underperform" || to == "Underweight" {
 			return -3
 		}

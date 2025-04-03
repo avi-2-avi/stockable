@@ -47,19 +47,19 @@ const featureDataList = [
         highlight: 'Unified',
         title: 'Market Intelligence',
         description: '📈 Stay ahead with aggregated data from leading financial platforms, all in one dashboard. No more switching between apps.',
-        image: 'src/assets/feature-1.webp',
+        image: 'src/assets/feature-1.png',
     },
     {
         highlight: 'Expert-Driven',
         title: 'Recommendations',
         description: '🧠 Get enhanced insights from top analysts across multiple sources—personalized to your investment style.',
-        image: 'src/assets/feature-2.webp',
+        image: 'src/assets/feature-2.png',
     },
     {
         highlight: 'Data-Backed',
         title: 'Decisions, Simplified',
         description: '📊 Cut through the noise with trend analysis, risk assessment, and actionable takeaways—all visualized for easy understanding.',
-        image: 'src/assets/feature-3.webp',
+        image: 'src/assets/feature-3.png',
     }
 ];
 

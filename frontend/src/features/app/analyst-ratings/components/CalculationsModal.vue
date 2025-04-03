@@ -28,7 +28,6 @@
                 <p>
                     Measures the effect of a rating upgrade or downgrade.
                 </p>
-                <p class="italic">Formula: RCI = Rating<sub>to</sub> - Rating<sub>from</sub></p>
 
                 <p class="font-semibold text-lg">RCI Matrix Table:</p>
                 <table class="w-full border mt-2 text-sm">

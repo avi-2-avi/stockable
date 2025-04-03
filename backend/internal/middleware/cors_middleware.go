@@ -16,6 +16,7 @@ func CORSMiddleware() gin.HandlerFunc {
 
 	allowedOrigins := map[string]bool{
 		"http://localhost:5173":        true,
+		"http://localhost:3000":        true,
 		"http://stockable-frontend":    true,
 		"http://stockable-frontend:80": true,
 	}

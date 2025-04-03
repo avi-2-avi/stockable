@@ -37,7 +37,7 @@ func (controller *AuthController) Register(context *gin.Context) {
 		return
 	}
 
-	user, err := controller.authService.Register(req.FullName, req.Email, req.Password, req.RoleName)
+	userDto, err := controller.authService.Register(req.FullName, req.Email, req.Password, req.RoleName)
 	if err != nil {
 		utils.Respond(context, utils.APIResponse{
 			Status:  http.StatusInternalServerError,
@@ -49,11 +49,7 @@ func (controller *AuthController) Register(context *gin.Context) {
 	utils.Respond(context, utils.APIResponse{
 		Status:  http.StatusCreated,
 		Message: "User registered successfully",
-		Body: dtos.RegisterUserDTO{
-			ID:       user.ID,
-			Email:    user.Email,
-			FullName: user.FullName,
-		},
+		Body:    userDto,
 	})
 }
 
@@ -73,7 +69,7 @@ func (controller *AuthController) Login(context *gin.Context) {
 		return
 	}
 
-	user, err := controller.authService.Login(req.Email, req.Password)
+	userDto, err := controller.authService.Login(req.Email, req.Password)
 	if err != nil {
 		utils.Respond(context, utils.APIResponse{
 			Status:  http.StatusUnauthorized,
@@ -82,17 +78,13 @@ func (controller *AuthController) Login(context *gin.Context) {
 		return
 	}
 
-	context.SetCookie("auth_token", user.Email, 86400, "/", "", false, true)
+	context.SetCookie("auth_token", userDto.Email, 86400, "/", "", false, true)
 
 	utils.Respond(context, utils.APIResponse{
 		Status:  http.StatusOK,
 		Message: "Login successful",
 		Body: map[string]interface{}{
-			"user": dtos.LoginUserDTO{
-				ID:       user.ID,
-				Email:    user.Email,
-				FullName: user.FullName,
-			},
+			"user": userDto,
 		},
 	})
 }
@@ -184,16 +176,7 @@ func (controller *AuthController) Update(context *gin.Context) {
 }
 
 func (controller *AuthController) List(context *gin.Context) {
-	users, err := controller.authService.List()
-
-	var userDtos []dtos.ListUserDTO
-	for _, user := range users {
-		userDtos = append(userDtos, dtos.ListUserDTO{
-			ID:       user.ID,
-			Email:    user.Email,
-			FullName: user.FullName,
-		})
-	}
+	userDtos, err := controller.authService.List()
 
 	if err != nil {
 		utils.Respond(context, utils.APIResponse{

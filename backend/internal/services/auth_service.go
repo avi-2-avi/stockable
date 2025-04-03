@@ -1,6 +1,7 @@
 package services
 
 import (
+	"backend/internal/dtos"
 	"backend/internal/models"
 	"backend/internal/repositories"
 	"fmt"
@@ -10,11 +11,11 @@ import (
 )
 
 type AuthService interface {
-	Register(fullName, email, password, roleName string) (*models.User, error)
-	Login(email, password string) (*models.User, error)
+	Register(fullName, email, password, roleName string) (dtos.RegisterUserDTO, error)
+	Login(email, password string) (dtos.LoginUserDTO, error)
 	Delete(id uuid.UUID) error
 	Update(user *models.User) error
-	List() ([]models.User, error)
+	List() ([]dtos.LoginUserDTO, error)
 }
 
 type authService struct {
@@ -27,15 +28,15 @@ func NewAuthService(authRepo *repositories.AuthRepository) AuthService {
 	}
 }
 
-func (service *authService) Register(fullName, email, password, roleName string) (*models.User, error) {
+func (service *authService) Register(fullName, email, password, roleName string) (dtos.RegisterUserDTO, error) {
 	_, err := service.authRepo.GetUserByEmail(email)
 	if err == nil {
-		return nil, fmt.Errorf("user with email %s already exists", email)
+		return dtos.RegisterUserDTO{}, fmt.Errorf("user with email %s already exists", email)
 	}
 
 	role, err := service.authRepo.GetRoleByName(roleName)
 	if err != nil {
-		return nil, fmt.Errorf("role %s not found", roleName)
+		return dtos.RegisterUserDTO{}, fmt.Errorf("role %s not found", roleName)
 	}
 
 	user := &models.User{
@@ -46,34 +47,42 @@ func (service *authService) Register(fullName, email, password, roleName string)
 	}
 
 	if err := user.HashPassword(); err != nil {
-		return nil, err
+		return dtos.RegisterUserDTO{}, err
 	}
 
 	err = service.authRepo.CreateUser(user)
 	if err != nil {
-		return nil, err
+		return dtos.RegisterUserDTO{}, err
 	}
 
 	user, err = service.authRepo.GetUserByEmail(email)
 	if err != nil {
-		return nil, fmt.Errorf("user with email %s not found", email)
+		return dtos.RegisterUserDTO{}, fmt.Errorf("user with email %s not found", email)
 	}
 
-	return user, nil
+	return dtos.RegisterUserDTO{
+		ID:       user.ID,
+		Email:    user.Email,
+		FullName: user.FullName,
+	}, nil
 }
 
-func (service *authService) Login(email, password string) (*models.User, error) {
+func (service *authService) Login(email, password string) (dtos.LoginUserDTO, error) {
 	user, err := service.authRepo.GetUserByEmail(email)
 	if err != nil {
-		return nil, fmt.Errorf("user with email %s not found", email)
+		return dtos.LoginUserDTO{}, fmt.Errorf("user with email %s not found", email)
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
-		return nil, fmt.Errorf("invalid password")
+		return dtos.LoginUserDTO{}, fmt.Errorf("invalid password")
 	}
 
-	return user, nil
+	return dtos.LoginUserDTO{
+		ID:       user.ID,
+		Email:    user.Email,
+		FullName: user.FullName,
+	}, nil
 }
 
 func (service *authService) Delete(id uuid.UUID) error {
@@ -84,6 +93,20 @@ func (service *authService) Update(user *models.User) error {
 	return service.authRepo.UpdateUser(user)
 }
 
-func (service *authService) List() ([]models.User, error) {
-	return service.authRepo.ListUsers()
+func (service *authService) List() ([]dtos.LoginUserDTO, error) {
+	users, err := service.authRepo.ListUsers()
+	if err != nil {
+		return nil, err
+	}
+
+	var userDtos []dtos.LoginUserDTO
+	for _, user := range users {
+		userDtos = append(userDtos, dtos.LoginUserDTO{
+			ID:       user.ID,
+			Email:    user.Email,
+			FullName: user.FullName,
+		})
+	}
+
+	return userDtos, nil
 }

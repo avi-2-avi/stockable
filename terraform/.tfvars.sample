@@ -1,2 +1,2 @@
-ssh_admin_ip = ""
-key_name = ""
+ssh_admin_ip = "" # Your public IP address (IPv4) for SSH access
+key_name = "" # Name of the key pair

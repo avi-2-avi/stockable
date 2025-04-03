@@ -162,9 +162,9 @@ Ensure you have configured AWS SSO before attempting to log in.
 ### Prepare Terraform Variables
 1. Copy the Terraform sample variables file:
    ```bash
-   cp terraform.tfvars.sample terraform.tfvars
+   cp .tfvars.sample .tfvars
    ```
-2. Open `terraform.tfvars` and fill in the required values.
+2. Open `.tfvars` and fill in the required values.
 
 ### Initialize Terraform
 Run the following command to initialize Terraform:
@@ -175,7 +175,7 @@ terraform init
 ### Apply Terraform Configuration
 Deploy the infrastructure using:
 ```bash
-terraform apply -var-file="terraform.tfvars"
+terraform apply -var-file=".tfvars"
 ```
 This will create the required AWS resources. The output will provide the SSH command to access the EC2 instance.
 

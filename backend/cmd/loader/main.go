@@ -47,11 +47,6 @@ func main() {
 	truSource := adapterFactory.CreateDataSource("TruAdapter", true)
 
 	adapterFactory.RegisterAdapter("TruAdapter", func(factory *manager.AdapterFactory) adapters.RatingAdapter {
-		fmt.Println("Creating TruAdapter")
-		if truSource == nil {
-			return nil
-		}
-
 		analystService := services.NewAnalystRatingService(factory.GetAnalystRatingRepository())
 		companyService := services.NewCompanyService(factory.GetCompanyRepository())
 		return adapters.NewTruAdapter(

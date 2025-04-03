@@ -69,7 +69,7 @@ func AddDefaultUser(db *gorm.DB) error {
 	db.Model(&models.User{}).Where("email = ?", "admin@mail.com").Count(&count)
 
 	if count == 0 {
-		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("admin123!"), bcrypt.DefaultCost)
+		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("Admin123!"), bcrypt.DefaultCost)
 		admin := models.User{
 			FullName: "Admin",
 			Email:    "admin@mail.com",

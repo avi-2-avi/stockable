@@ -18,6 +18,10 @@ export const validateAuthForm = (
     errors.password = 'Password is required.'
   } else if (form.password.length < 6) {
     errors.password = 'Password must be at least 6 characters.'
+  } else if (!/[0-9]/.test(form.password)) {
+    errors.password = 'Password must contain at least one number.'
+  } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(form.password)) {
+    errors.password = 'Password must contain at least one special character.'
   }
 
   return errors

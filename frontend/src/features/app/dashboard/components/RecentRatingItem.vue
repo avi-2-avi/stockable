@@ -15,7 +15,7 @@
 
 <script lang="ts" setup>
 import { ClockIcon } from 'lucide-vue-next';
-import CPIBadge from '@/components/ui/CpiBadge.vue';
+import CPIBadge from '@/components/ui/CPIBadge.vue';
 import type { Rating } from '@/types/rating';
 import { formatStringToDate, formatStringToTime } from '@/utils/formater';
 

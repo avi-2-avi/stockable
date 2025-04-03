@@ -1,14 +1,7 @@
 import { mount } from '@vue/test-utils'
-import { describe, it, expect, vi } from 'vitest'
-import AuthPage from '../pages/LoginPage.vue'
+import { describe, it, expect } from 'vitest'
+import AuthPage from '@/features/auth/pages/LoginPage.vue'
 import BaseNavbar from '@/components/navigation/BaseNavbar.vue'
-
-vi.mock('axios', () => ({
-  default: {
-    post: vi.fn(() => Promise.resolve({ data: {} })),
-    get: vi.fn(() => Promise.resolve({ data: {} })),
-  },
-}))
 
 describe('AuthPage.vue', () => {
   it('renders the Base Navbar', () => {

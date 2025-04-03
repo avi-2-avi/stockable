@@ -6,13 +6,7 @@
             </div>
             <div class="col-span-6 lg:col-span-2 lg:row-span-2">
                 <Card class="p-5 h-full">
-                    <p class="text-xl font-semibold font-outfit">Recent Ratings</p>
-                    <div class="space-y-2 overflow-y-auto max-h-[380px]" v-if="cachedDashboardRatings?.latest_ratings?.length">
-                        <RecentRatingItem v-for="(rating, _) in cachedDashboardRatings.latest_ratings ?? []" :key="rating.id"
-                            :rating="rating"
-                            />
-                    </div>
-                    <p v-else>Loading ratings...</p>
+                    <RecentRatingTable :latestRatings="cachedDashboardRatings?.latest_ratings ?? []" />
                 </Card>
             </div>
             <div class="col-span-6 lg:col-span-2 lg:row-start-2 lg:row-span-1">
@@ -31,12 +25,12 @@
 <script lang="ts" setup>
 import AppLayout from '@/layouts/AppLayout.vue';
 import Card from '@/components/ui/Card.vue';
-import RecentRatingItem from '../components/RecentRatingItem.vue';
 import { useAuthStore } from '@/store/authStore';
 import { useDashboardStore } from '@/store/dashboardStore';
 import DonutChartCard from '../components/DonutChartCard.vue';
 import NewsCard from '../components/NewsCard.vue';
 import AboutCard from '../components/AboutCard.vue';
+import RecentRatingTable from '../components/RecentRatingTable.vue';
 
 const authStore = useAuthStore();
 const { cachedDashboardRatings  } = useDashboardStore();

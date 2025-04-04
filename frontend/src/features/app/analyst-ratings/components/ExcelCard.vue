@@ -5,8 +5,10 @@
                 <Sheet class="w-6 h-6 text-base" />
             </div>
             <div>
-                <p class="text-lg font-medium font-outfit">Download to Excel</p>
-                <p class="text-sm text-foreground/80">Click to download the data in Excel format.</p>
+                <p v-if="hasData" class="text-lg font-medium font-outfit">Download to Excel</p>
+                <p v-else class="text-lg font-medium font-outfit">No data available to export</p>
+                <p v-if="hasData" class="text-sm text-foreground/80">Click to download the data in Excel format.</p>
+                <p v-else class="text-sm text-foreground/80">Select other filters to export data.</p>
             </div>
         </div>
     </Card>
@@ -15,7 +17,10 @@
 <script setup lang="ts">
 import Card from '@/components/ui/Card.vue'
 import { Sheet } from 'lucide-vue-next'
+import { computed } from 'vue';
 import * as XLSX from 'xlsx';
+
+const hasData = computed(() => props.tableData && props.tableData.length > 0);
 
 const props = defineProps({
     cardClass: {
@@ -33,7 +38,7 @@ const props = defineProps({
 });
 
 const exportToExcel = () => {
-    if (!props.tableData || props.tableData.length === 0) {
+    if (!hasData.value) {
         return;
     }
 

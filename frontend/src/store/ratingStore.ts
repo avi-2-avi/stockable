@@ -38,9 +38,9 @@ export const useRatingStore = defineStore('rating', () => {
           sort_order: sortOrder.value,
           ...filters.value,
         },
-        withCredentials: true
+        withCredentials: true,
       })
-      ratings.value = response.data.body.ratings
+      ratings.value = response.data.body.ratings || []
       totalRatings.value = response.data.body.total
     } catch (err) {
       console.error('Error fetching ratings', err)
@@ -66,12 +66,13 @@ export const useRatingStore = defineStore('rating', () => {
     fetchRatings()
   }
 
-  const setFilter = (key: string, value: string) => {
-    if (value) {
-      filters.value[key] = value
-    } else {
-      delete filters.value[key]
-    }
+  const setFilter = (newFilters: Record<string, string>) => {
+    const cleanedFilters = Object.fromEntries(
+      Object.entries({ ...filters.value, ...newFilters }).filter(([_, v]) => v !== ''),
+    )
+
+    filters.value = cleanedFilters
+
     fetchRatings()
   }
 

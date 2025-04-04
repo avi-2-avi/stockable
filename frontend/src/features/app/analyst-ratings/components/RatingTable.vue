@@ -122,16 +122,8 @@ const filters = ref<Record<string, string>>({
 });
 
 const applyFilters = () => {
-    filters.value = { ...filters.value };  
-
-    Object.entries(filters.value).forEach(([key, value]) => {
-        ratingStore.setFilter(key, value);
-    });
+    ratingStore.setFilter(filters.value);
 };
-
-watch(() => filters.value.rating_to, () => {
-  applyFilters();
-});
 
 const filteredRatings = computed(() => {
     return ratings.value.filter(rating => {

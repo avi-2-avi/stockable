@@ -3,24 +3,24 @@
     <div class="flex justify-end items-center">
       <Button label="Add User" variant="solid" @click="openAddUserModal" />
     </div>
-    <table class="min-w-full table-auto border border-border border-separate">
+    <table class="min-w-full table-auto border-y border-border border-collapse">
       <thead>
         <tr>
-          <th class="px-4 py-2 text-left border border-border">Name</th>
-          <th class="px-4 py-2 text-left border border-border">Email</th>
-          <th class="px-4 py-2 text-left border border-border">Role</th>
-          <th class="px-4 py-2 text-left border border-border">Actions</th>
+          <th class="px-4 py-2 text-left border-y border-border">Name</th>
+          <th class="px-4 py-2 text-left border-y border-border">Email</th>
+          <th class="px-4 py-2 text-left border-y border-border">Role</th>
+          <th class="px-4 py-2 text-left border-y border-border">Actions</th>
         </tr>
       </thead>
       <tbody>
         <tr v-if="users.length === 0">
-          <td colspan="4" class="text-center py-4 border border-border">No users found</td>
+          <td colspan="4" class="text-center py-4 border-y border-border">No users found</td>
         </tr>
-        <tr v-else v-for="user in users" :key="user.id">
-          <td class="px-4 py-2 border border-border">{{ user.full_name }}</td>
-          <td class="px-4 py-2 border border-border">{{ user.email }}</td>
-          <td class="px-4 py-2 border border-border">{{ getRoleName(user.role_id || 0) }}</td>
-          <td class="px-4 py-2 flex border border-border space-x-2">
+        <tr v-else v-for="user in users" :key="user.id" class="border-y border-border odd:bg-stock-200/30">
+          <td class="px-4 py-2">{{ user.full_name }}</td>
+          <td class="px-4 py-2">{{ user.email }}</td>
+          <td class="px-4 py-2">{{ getRoleName(user.role_id || 0) }}</td>
+          <td class="px-4 py-2 flex space-x-2">
             <Button @click="openUpdateUserModal(user)" label="Edit" variant="subtle" />
             <Button @click="openDeleteUserModal(user.id)" label="Delete" variant="warn" />
           </td>

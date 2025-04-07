@@ -13,9 +13,17 @@ export const useDashboardStore = defineStore('useDashboard', () => {
   const cachedDashboardRatings = reactive<DashboardData>({...dashboardRatings})
 
   const fetchDashboardRatings = async (sourceId: string) => {
+    const token = localStorage.getItem('auth_token');
+    if (!token) {
+      throw new Error('No authentication token found');
+    }
+
     try {
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/ratings/dashboard`, {
         params: { source_id: sourceId },
+        headers: {
+          'Authorization': `Bearer ${token}`, 
+        },
         withCredentials: true,
       })
 

@@ -18,7 +18,15 @@ export const useSourceStore = defineStore('source', () => {
 
   const fetchSources = async () => {
     try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/sources`, {
+        headers: {
+          'Authorization': `Bearer ${token}`, 
+        },
         withCredentials: true 
       })
 

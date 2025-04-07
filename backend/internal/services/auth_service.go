@@ -82,6 +82,7 @@ func (service *authService) Login(email, password string) (dtos.LoginUserDTO, er
 		ID:       user.ID,
 		Email:    user.Email,
 		FullName: user.FullName,
+		RoleID:   user.RoleID,
 	}, nil
 }
 

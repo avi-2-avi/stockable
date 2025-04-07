@@ -24,9 +24,14 @@ export const useIndicatorStore = defineStore('indicator', () => {
         highest_increment_in_target_price_ticker: ''
       })
 
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/api/ratings/indicators?source_id=${sourceId}`,
-        { withCredentials: true }
+        { withCredentials: true, headers: { 'Authorization': `Bearer ${token}` } }
       )
 
       if (response.status !== 200) {

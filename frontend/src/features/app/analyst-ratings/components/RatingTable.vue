@@ -37,12 +37,12 @@
                 <tr v-for="rating in filteredRatings" :key="rating.id" class="odd:bg-stock-200/30">
                     <td v-for="column in columns" :key="column.id" class="border-border border-y px-4 py-2">
                         <template v-if="column.render">
-                            <span v-if="column.render(rating[column.id as keyof Rating])?.text">
-                                {{ column.render(rating[column.id as keyof Rating])?.text }}
+                            <span v-if="column.render(rating[column.id as keyof Rating], rating)?.text">
+                                {{ column.render(rating[column.id as keyof Rating], rating)?.text }}
                             </span>
-                            <component v-else-if="column.render(rating[column.id as keyof Rating])?.component"
-                                :is="column.render(rating[column.id as keyof Rating])?.component"
-                                v-bind="column.render(rating[column.id as keyof Rating])?.props" />
+                            <component v-else-if="column.render(rating[column.id as keyof Rating], rating)?.component"
+                                :is="column.render(rating[column.id as keyof Rating], rating)?.component"
+                                v-bind="column.render(rating[column.id as keyof Rating], rating)?.props" />
                         </template>
                         <span v-else>
                             {{ rating[column.id as keyof Rating] }}
@@ -58,10 +58,11 @@
                 <SelectDropdown id="limit-select" v-model="selectedLimit" :options="limitOptions" customClass="w-40" />
             </div>
 
-            <Button label="Next" size="md" @click="nextPage"
-                :disabled="page * limit >= totalRatings" />
+            <Button label="Next" size="md" @click="nextPage" :disabled="page * limit >= totalRatings" />
         </div>
     </div>
+    <CompanyModal v-if="showModal" :ticker="selectedCompany?.ticker ?? ''" :company="selectedCompany?.company ?? ''"
+        @close="showModal = false" />
 </template>
 
 <script setup lang="ts">
@@ -74,20 +75,41 @@ import { useRatingStore } from '@/store/ratingStore';
 import type { Rating } from '@/types/rating';
 import { formatNumberToCurrency, formatStringToDate, formatActionString, formatNumberToPercentage } from '@/utils/formater';
 import { storeToRefs } from 'pinia';
-import { computed, onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { actionOptions, ratingOptions } from "@/data/rating_options";
 import { limitOptions } from "@/data/table_options";
+import CompanyModal from "./CompanyModal.vue";
 
 const ratingStore = useRatingStore();
 const { ratings, totalRatings, page, limit, sortBy, sortOrder } = storeToRefs(ratingStore);
 
+const showModal = ref(false);
+const selectedCompany = ref<{ ticker: string; company: string } | null>(null);
+
 const columns: {
     id: keyof Rating;
     label: string;
-    render?: (value: Rating[keyof Rating]) => { text?: string; component?: any; props?: Record<string, any> };
+    render?: (value: Rating[keyof Rating], row: Rating) => { text?: string; component?: any; props?: Record<string, any> };
 }[] = [
-        { id: "ticker", label: "Ticker" },
-        { id: "company", label: "Company" },
+        {
+            id: "ticker", label: "Ticker",
+            render: (value, row) => ({
+                component: Button,
+                props: {
+                    label: value,
+                    size: "md",
+                    variant: "ghost",
+                    onClick: () => {
+                        selectedCompany.value = {
+                            ticker: row.ticker,
+                            company: row.company
+                        };
+                        showModal.value = true;
+                    }
+                }
+            })
+        },
+        { id: "company", label: "Company"},
         { id: "action", label: "Action", render: (value) => ({ text: formatActionString(value as string) }) },
         { id: "target_from", label: "Target From", render: (value) => ({ text: formatNumberToCurrency(value as number) }) },
         { id: "target_to", label: "Target To", render: (value) => ({ text: formatNumberToCurrency(value as number) }) },

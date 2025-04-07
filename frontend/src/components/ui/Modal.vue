@@ -8,7 +8,7 @@
             <div>
                 <slot name="body"></slot>
             </div>
-            <footer class="mt-4 flex justify-end">
+            <footer class="mt-4 flex justify-end space-x-2">
                 <slot name="footer"></slot>
             </footer>
         </div>

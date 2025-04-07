@@ -70,6 +70,12 @@ func RegisterUserRoutes(api *gin.RouterGroup, db *gorm.DB) {
 	registerUserRoute(api, "GET", "/ratings", ratingController.GetRatings)
 	registerUserRoute(api, "GET", "/ratings/indicators", ratingController.GetRatingsIndicators)
 	registerUserRoute(api, "GET", "/ratings/dashboard", ratingController.GetDashboardRatings)
+
+	companyRepo := repositories.NewCompanyRepository(db)
+	companyService := services.NewCompanyService(companyRepo)
+	companyController := controllers.NewCompanyController(companyService)
+
+	registerUserRoute(api, "GET", "/company/description", companyController.GetCompanyDescription)
 }
 
 func registerUserRoute(api *gin.RouterGroup, method, route string, controllerFunc gin.HandlerFunc) {

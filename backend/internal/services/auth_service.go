@@ -106,6 +106,7 @@ func (service *authService) List() ([]dtos.LoginUserDTO, error) {
 			ID:       user.ID,
 			Email:    user.Email,
 			FullName: user.FullName,
+			RoleID:   user.RoleID,
 		})
 	}
 

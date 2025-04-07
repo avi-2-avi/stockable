@@ -21,6 +21,7 @@ export const useAuthStore = defineStore(
   () => {
     const user = ref<User | null>(null)
     const router = useRouter()
+    const users = ref<User[]>([])
 
     const isAuthenticated = computed(() => !!user.value)
 
@@ -67,19 +68,24 @@ export const useAuthStore = defineStore(
       }
     }
 
-    const register = async (fullName: string, email: string, password: string, role_name: string) => {
+    const createUser = async (full_name: string, email: string, password: string, role_name: string) => {
       try {
         await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
-          full_name: fullName,
+          full_name,
           email,
           password,
           role_name,
         })
-        await login(email, password)
       } catch (error) {
-        console.error('Registration failed')
-        throw new Error('Registration failed')
+        console.error('User creation failed')
+        throw new Error('User creation failed')
       }
+    }
+
+
+    const register = async (full_name: string, email: string, password: string, role_name: string) => {
+      await createUser(full_name, email, password, role_name)
+      await login(email, password)
     }
 
     const logout = async () => {
@@ -101,7 +107,75 @@ export const useAuthStore = defineStore(
       }
     }
 
-    return { user, isAuthenticated, login, register, logout }
+    const fetchUsers = async () => {
+      try {
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+          throw new Error('No authentication token found');
+        }
+
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/auth/list`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        })
+
+        users.value = response.data.body.map((user: User) => ({
+          id: user.id,
+          full_name: user.full_name,
+          email: user.email,
+          role_id: user.role_id
+        }))
+      } catch (error) {
+        console.error('Error fetching users:', error)
+      }
+    }
+
+    interface UpdateUserBody {
+      full_name?: string;
+      email?: string;
+      password?: string;
+    }
+
+    const updateUser = async (id: string, updateUser: UpdateUserBody) => {
+      try {
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+          throw new Error('No authentication token found');
+        }
+
+        const response = await axios.patch(`${import.meta.env.VITE_API_URL}/api/auth/update/${id}`, updateUser, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        })
+
+        return response.data
+      } catch (error) {
+        console.error('Error updating user:', error)
+      }
+    }
+
+    const deleteUser = async (id: string) => {
+      try {
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+          throw new Error('No authentication token found');
+        }
+
+        const response = await axios.delete(`${import.meta.env.VITE_API_URL}/api/auth/delete/${id}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        })
+
+        return response.data
+      } catch (error) {
+        console.error('Error deleting user:', error)
+      }
+    }
+
+    return { user, isAuthenticated, login, register, logout, users, fetchUsers, updateUser, deleteUser, createUser }
   },
   {
     persist: {

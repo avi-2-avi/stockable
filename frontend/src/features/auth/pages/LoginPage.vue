@@ -9,7 +9,7 @@
 
                 <form @submit.prevent="handleSubmit" class="space-y-4">
                     <BaseInput v-if="isSignup" label="Full Name" type="text" placeholder="John Doe"
-                        v-model="form.fullName" :errorMessage="errors.fullName" />
+                        v-model="form.full_name" :errorMessage="errors.full_name" />
 
                     <BaseInput label="Email" type="email" placeholder="you@example.com" v-model="form.email"
                         :errorMessage="errors.email" />
@@ -52,7 +52,7 @@ const authStore = useAuthStore()
 const isSignup = ref(false);
 const isLoading = ref(false); 
 const form = ref({
-    fullName: "",
+    full_name: "",
     email: "",
     password: ""
 });
@@ -72,7 +72,7 @@ const handleSubmit = async () => {
     isLoading.value = true; 
     try {
         if (isSignup.value) {
-            await authStore.register(form.value.fullName, form.value.email, form.value.password, 'user');
+            await authStore.register(form.value.full_name, form.value.email, form.value.password, 'user');
         } else {
             await authStore.login(form.value.email, form.value.password);
         }

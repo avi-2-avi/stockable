@@ -4,6 +4,7 @@ import LoginPage from '../features/auth/pages/LoginPage.vue'
 import { useAuthStore } from '@/store/authStore'
 import DashboardPage from '@/features/app/dashboard/pages/DashboardPage.vue'
 import AnalystRatingsPage from '@/features/app/analyst-ratings/pages/AnalystRatingsPage.vue'
+import UserAdminPage from '@/features/app/admin/pages/UserAdminPage.vue'
 
 export const routes = [
   {
@@ -31,6 +32,12 @@ export const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: '/app/admin/users',
+    name: 'Admin',
+    component: UserAdminPage,
+    meta: { requiresAuth: true, requiresAdmin: true },
+  },
+  {
     path: '/:pathMatch(.*)*',
     redirect: '/',
   },
@@ -46,6 +53,8 @@ router.beforeEach((to, _, next) => {
 
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/auth')
+  } else if (to.meta.requiresAdmin && authStore.user?.role_id !== 1) {
+    next('/app/dashboard') 
   } else if (to.path === '/auth' && authStore.isAuthenticated) {
     next('/app/dashboard')
   } else {

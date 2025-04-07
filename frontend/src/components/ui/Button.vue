@@ -11,7 +11,7 @@
 import { computed, type PropType } from 'vue'
 
 const sizes = ['xs', 'sm', 'md', 'lg', 'xl'] as const;
-const variants = ['solid', 'subtle', 'surface', 'outline', 'ghost', 'plain'] as const;
+const variants = ['solid', 'subtle', 'surface', 'outline', 'ghost', 'plain', 'warn'] as const;
 
 const props = defineProps({
     label: String,
@@ -48,6 +48,7 @@ const variantClasses: Record<typeof variants[number], string> = {
     outline: 'border border-border text-foreground hover:bg-stock-200',
     ghost: 'text-foreground hover:bg-stock-500/30',
     plain: 'text-foreground',
+    warn: 'bg-stock-600 text-white hover:bg-stock-600',
 }
 
 const buttonClasses = computed(() => {

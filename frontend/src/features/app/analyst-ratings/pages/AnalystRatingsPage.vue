@@ -1,5 +1,5 @@
 <template>
-  <AppLayout pageTitle="Home">
+  <AppLayout pageTitle="Analyst Ratings">
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
       <HomeCard v-for="(indicator, index) in indicatorInformation" :key="index" :title="indicator.title"
         :value="indicator.value" :description="indicator.description" :icon="indicator.icon" />

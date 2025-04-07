@@ -11,11 +11,20 @@ export const useCompanyInfoStore = defineStore('companyInfo', {
     async fetchCompanyDescription(ticker: string, company: string): Promise<string> {
         const key = `${ticker}-${company}`;
         if (this.descriptions[key]) return this.descriptions[key];
+        
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+          throw new Error('No authentication token found');
+        }
       
         try {
           const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/company/description?ticker=${ticker}&company=${company}`, {
-            withCredentials: true,
-          })
+            headers: {
+              'Authorization': `Bearer ${token}`, 
+            },
+            withCredentials: true, 
+          });
+
           const description = response.data.body.description || 'No info found.';
           this.descriptions[key] = description;
           return description;

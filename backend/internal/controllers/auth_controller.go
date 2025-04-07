@@ -78,13 +78,20 @@ func (controller *AuthController) Login(context *gin.Context) {
 		return
 	}
 
-	context.SetCookie("auth_token", userDto.Email, 86400, "/", "", false, true)
+	token, err := utils.GenerateJWT(userDto)
+	if err != nil {
+		utils.Respond(context, utils.APIResponse{
+			Status:  http.StatusInternalServerError,
+			Message: "Failed to generate JWT token",
+		})
+		return
+	}
 
 	utils.Respond(context, utils.APIResponse{
 		Status:  http.StatusOK,
 		Message: "Login successful",
 		Body: map[string]interface{}{
-			"user": userDto,
+			"token": token,
 		},
 	})
 }

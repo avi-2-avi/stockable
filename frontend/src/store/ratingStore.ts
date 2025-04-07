@@ -29,6 +29,11 @@ export const useRatingStore = defineStore('rating', () => {
     error.value = null
 
     try {
+      const token = localStorage.getItem('auth_token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
       const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/ratings`, {
         params: {
           source_id: selectedSource.value,
@@ -37,6 +42,9 @@ export const useRatingStore = defineStore('rating', () => {
           sort_by: sortBy.value,
           sort_order: sortOrder.value,
           ...filters.value,
+        },
+        headers: {
+          'Authorization': `Bearer ${token}`, 
         },
         withCredentials: true,
       })

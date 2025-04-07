@@ -46,7 +46,7 @@ const variantClasses: Record<typeof variants[number], string> = {
     subtle: 'bg-stock-200 hover:bg-stock-300 text-black',
     surface: 'bg-stock-200 border border-border text-black hover:bg-stock-300',
     outline: 'border border-border text-foreground hover:bg-stock-200',
-    ghost: 'text-foreground hover:bg-stock-200',
+    ghost: 'text-foreground hover:bg-stock-500/30',
     plain: 'text-foreground',
 }
 

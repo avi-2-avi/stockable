@@ -25,7 +25,7 @@ func (r *AuthRepository) CreateRole(role *models.Role) error {
 
 func (r *AuthRepository) GetUserByEmail(email string) (*models.User, error) {
 	var user models.User
-	err := r.db.Where("email = ?", email).First(&user).Error
+	err := r.db.Preload("Role").Where("email = ?", email).First(&user).Error
 	return &user, err
 }
 

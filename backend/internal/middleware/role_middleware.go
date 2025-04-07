@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"backend/internal/models"
+	"backend/internal/dtos"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,7 +16,7 @@ func RoleMiddleware(allowedRoleIDs ...uint) gin.HandlerFunc {
 			return
 		}
 
-		u, ok := user.(models.User)
+		u, ok := user.(dtos.LoginUserDTO)
 		if !ok {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized - Invalid user data"})
 			c.Abort()
